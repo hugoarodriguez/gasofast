@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:gasofast/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class ChangePasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _backButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Stack(
         children: <Widget>[
           crearFondo(context),
-          _loginForm(context)
+          _changePasswordForm(context)
         ],
       ),
     );
   }
 }
 
+//Botón para regresar a la pantalla de Inicio
+Widget _backButton(BuildContext context){
+  return FloatingActionButton(
+    elevation: 0.0,
+    backgroundColor: Colors.transparent,
+    child: Icon(Icons.arrow_back),
+    onPressed: (){ print('Volver a la pantalla de inicio'); },
+  );
+}
+
 //Widget que contiene todo el formulario Login
-Widget _loginForm(BuildContext context){
+Widget _changePasswordForm(BuildContext context){
   final size = MediaQuery.of(context).size;
 
   return SingleChildScrollView(
@@ -47,25 +59,18 @@ Widget _loginForm(BuildContext context){
           ),
           child: Column(
             children: <Widget>[
-              Text('Login', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
+              Text('Cambiar Contraseña', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
                 SizedBox(height: 10.0),
-                _crearEmail(),
+                _crearPasswordA(),
                 SizedBox(height: 20.0),
-                _crearPassword(),
+                _crearPasswordN(),
+                SizedBox(height: 20.0),
+                _crearPasswordNC(),
                 SizedBox(height: 20.0),
                 _crearButton(),
                 SizedBox(height: 10.0),
             ],
           ),
-        ),
-
-        TextButton(
-          child: Text('¿No tienes una cuenta?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'signup')
-        ),
-        TextButton(
-          child: Text('¿Olvidaste tu contraseña?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'recoveracc')
         ),
 
       ],
@@ -74,30 +79,43 @@ Widget _loginForm(BuildContext context){
 
 }
 
-//Widget para el TextField del Email
-Widget _crearEmail(){
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-    child: TextField(
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        icon: Icon(Icons.alternate_email_rounded),
-        hintText: 'ejemplo@correo.com',
-        labelText: 'Correo',
-      )
-    ),
-  );
-}
-
-//Widget para el TextField de la Password
-Widget _crearPassword(){
+//Widget para el TextField de la PasswordA
+Widget _crearPasswordA(){
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 20.0),
     child: TextField(
       obscureText: true,
       decoration: InputDecoration(
         icon: Icon(Icons.lock_outline_rounded),
-        labelText: 'Contraseña',
+        labelText: 'Contraseña actual',
+      )
+    ),
+  );
+}
+
+//Widget para el TextField de la PasswordN
+Widget _crearPasswordN(){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 20.0),
+    child: TextField(
+      obscureText: true,
+      decoration: InputDecoration(
+        icon: Icon(Icons.lock_outline_rounded),
+        labelText: 'Contraseña nueva',
+      )
+    ),
+  );
+}
+
+//Widget para el TextField de la Password
+Widget _crearPasswordNC(){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 20.0),
+    child: TextField(
+      obscureText: true,
+      decoration: InputDecoration(
+        icon: Icon(Icons.lock_outline_rounded),
+        labelText: 'Repetir contraseña nueva',
       )
     ),
   );
@@ -122,7 +140,7 @@ Widget _crearButton(){
     child: ElevatedButton(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 15.0 ),
-        child: Text('Ingresar', style: TextStyle(color: Colors.black) ,),
+        child: Text('Cambiar', style: TextStyle(color: Colors.black) ,),
       ),
       style: estiloBoton,
       onPressed: (){},

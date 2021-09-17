@@ -1,23 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:gasofast/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class RecoverAccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _backButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Stack(
         children: <Widget>[
           crearFondo(context),
-          _loginForm(context)
+          _recoverAccountForm(context)
         ],
       ),
     );
   }
 }
 
+//Botón para regresar a la pantalla del Login
+Widget _backButton(BuildContext context){
+  return FloatingActionButton(
+    elevation: 0.0,
+    backgroundColor: Colors.transparent,
+    child: Icon(Icons.arrow_back),
+    onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+  );
+}
+
 //Widget que contiene todo el formulario Login
-Widget _loginForm(BuildContext context){
+Widget _recoverAccountForm(BuildContext context){
+
+  final textIndication1 = '''Ingresa el correo electrónico con el que te registraste y se te enviará una solicitud para que cambies tu contraseña.\n\n
+Posteriormente tendrás que iniciar sesión con tu nueva contraseña''';
+
   final size = MediaQuery.of(context).size;
 
   return SingleChildScrollView(
@@ -47,25 +63,20 @@ Widget _loginForm(BuildContext context){
           ),
           child: Column(
             children: <Widget>[
-              Text('Login', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
+              Text('Recuperar Cuenta', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
                 SizedBox(height: 10.0),
-                _crearEmail(),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Text(textIndication1, 
+                  )
+                ),
                 SizedBox(height: 20.0),
-                _crearPassword(),
+                _crearEmail(),
                 SizedBox(height: 20.0),
                 _crearButton(),
                 SizedBox(height: 10.0),
             ],
           ),
-        ),
-
-        TextButton(
-          child: Text('¿No tienes una cuenta?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'signup')
-        ),
-        TextButton(
-          child: Text('¿Olvidaste tu contraseña?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'recoveracc')
         ),
 
       ],
@@ -89,20 +100,6 @@ Widget _crearEmail(){
   );
 }
 
-//Widget para el TextField de la Password
-Widget _crearPassword(){
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-    child: TextField(
-      obscureText: true,
-      decoration: InputDecoration(
-        icon: Icon(Icons.lock_outline_rounded),
-        labelText: 'Contraseña',
-      )
-    ),
-  );
-}
-
 //Widget para el ElevatedButton de Ingresar
 Widget _crearButton(){
 
@@ -121,8 +118,8 @@ Widget _crearButton(){
   return Container(
     child: ElevatedButton(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 15.0 ),
-        child: Text('Ingresar', style: TextStyle(color: Colors.black) ,),
+        padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0 ),
+        child: Text('Enviar Solicitud', style: TextStyle(color: Colors.black) ,),
       ),
       style: estiloBoton,
       onPressed: (){},

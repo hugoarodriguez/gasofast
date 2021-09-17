@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:gasofast/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _backButton(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       body: Stack(
         children: <Widget>[
           crearFondo(context),
-          _loginForm(context)
+          _signUpForm(context)
         ],
       ),
     );
   }
 }
 
+//Botón para regresar a la pantalla del Login
+Widget _backButton(BuildContext context){
+  return FloatingActionButton(
+    elevation: 0.0,
+    backgroundColor: Colors.transparent,
+    child: Icon(Icons.arrow_back),
+    onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+  );
+}
+
 //Widget que contiene todo el formulario Login
-Widget _loginForm(BuildContext context){
+Widget _signUpForm(BuildContext context){
   final size = MediaQuery.of(context).size;
 
   return SingleChildScrollView(
@@ -28,7 +40,6 @@ Widget _loginForm(BuildContext context){
             height: 120.0,
           ),
         ),
-
         Container(
           width: size.width * 0.85,
           margin: EdgeInsets.only(top: 30.0, bottom: 5.0),
@@ -47,11 +58,13 @@ Widget _loginForm(BuildContext context){
           ),
           child: Column(
             children: <Widget>[
-              Text('Login', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
+              Text('Sign Up', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
                 SizedBox(height: 10.0),
                 _crearEmail(),
                 SizedBox(height: 20.0),
                 _crearPassword(),
+                SizedBox(height: 20.0),
+                _crearPasswordC(),
                 SizedBox(height: 20.0),
                 _crearButton(),
                 SizedBox(height: 10.0),
@@ -59,14 +72,7 @@ Widget _loginForm(BuildContext context){
           ),
         ),
 
-        TextButton(
-          child: Text('¿No tienes una cuenta?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'signup')
-        ),
-        TextButton(
-          child: Text('¿Olvidaste tu contraseña?', style: TextStyle(color: Colors.white ),),
-          onPressed: () => Navigator.pushReplacementNamed(context, 'recoveracc')
-        ),
+        _crearRegistroOpciones(),
 
       ],
     ),
@@ -103,7 +109,21 @@ Widget _crearPassword(){
   );
 }
 
-//Widget para el ElevatedButton de Ingresar
+//Widget para el TextField de la confirmación de la Password
+Widget _crearPasswordC(){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 20.0),
+    child: TextField(
+      obscureText: true,
+      decoration: InputDecoration(
+        icon: Icon(Icons.lock_outline_rounded),
+        labelText: 'Repetir Contraseña',
+      )
+    ),
+  );
+}
+
+//Widget para el ElevatedButton de Registrar
 Widget _crearButton(){
 
   final estiloBoton = ButtonStyle(
@@ -122,10 +142,66 @@ Widget _crearButton(){
     child: ElevatedButton(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 60.0, vertical: 15.0 ),
-        child: Text('Ingresar', style: TextStyle(color: Colors.black) ,),
+        child: Text('Registrarme', style: TextStyle(color: Colors.black) ,),
       ),
       style: estiloBoton,
       onPressed: (){},
+    ),
+  );
+}
+
+Widget _crearRegistroOpciones(){
+  final textHeader =  Container(
+    child: Text('Prefiero registrarme con:', style: TextStyle(color: Colors.white), )
+  );
+
+  final googleButton = ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: Container(
+            color: Color.fromRGBO(17, 45, 78, 1.0),
+            child: IconButton(
+              icon: Image(
+                image: AssetImage('assets/images/google_logo.png'),
+                width: 32.0,
+                height: 32.0,
+                fit: BoxFit.cover,
+              ),
+              onPressed: (){},
+            ),
+          ),
+        );
+  
+  final facebookButton = ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: Container(
+            color: Color.fromRGBO(17, 45, 78, 1.0),
+            child: IconButton(
+              icon: Image(
+                image: AssetImage('assets/images/facebook_logo.png'),
+                width: 32.0,
+                height: 32.0,
+                fit: BoxFit.cover,
+              ),
+              onPressed: (){},
+            ),
+          ),
+        );
+
+  return Container(
+    padding: EdgeInsets.symmetric(vertical: 15.0),
+    child: Column(
+      children: [
+        textHeader,
+        SizedBox(height: 10.0,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            googleButton,
+            SizedBox(width: 20.0,),
+            facebookButton
+          ],
+        ),
+      ],
     ),
   );
 }

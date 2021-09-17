@@ -21,3 +21,51 @@ Widget gasoFastIcon(Size size){
     )
   );
 }
+
+//Widget para el fondo de la pantalla
+Widget crearFondo(BuildContext context){
+
+  final size = MediaQuery.of(context).size;
+
+  final fondoAzulOscuro = Container(
+    height: size.height * 0.50,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(17, 45, 78, 1.0)
+    ),
+  );
+
+  final fondoAzulClaro = Container(
+    height: size.height * 0.50,
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: Color.fromRGBO(63, 114, 175, 1.0)
+    ),
+  );
+
+  final fondo = Container(
+    child: Column(
+      children: <Widget>[
+        fondoAzulOscuro,
+        fondoAzulClaro
+      ],
+    ),
+  );
+
+  final header = Container(
+      padding: EdgeInsets.only(top: size.height * 0.05),
+      child: Column(
+        children: <Widget>[
+          gasoFastIcon(size),
+          SizedBox(height: 10.0, width: double.infinity),
+        ],
+      ),
+    );
+
+    return Stack(
+      children: <Widget>[
+        fondo,
+        header,
+      ],
+    );
+}
