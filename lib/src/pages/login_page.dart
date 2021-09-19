@@ -53,7 +53,7 @@ Widget _loginForm(BuildContext context){
                 SizedBox(height: 20.0),
                 _crearPassword(),
                 SizedBox(height: 20.0),
-                _crearButton(),
+                _crearButton(context),
                 SizedBox(height: 10.0),
             ],
           ),
@@ -104,7 +104,7 @@ Widget _crearPassword(){
 }
 
 //Widget para el ElevatedButton de Ingresar
-Widget _crearButton(){
+Widget _crearButton(BuildContext context){
 
   final estiloBoton = ButtonStyle(
       backgroundColor: MaterialStateProperty.resolveWith<Color>(
@@ -125,7 +125,8 @@ Widget _crearButton(){
         child: Text('Ingresar', style: TextStyle(color: Colors.black) ,),
       ),
       style: estiloBoton,
-      onPressed: (){},
+      //TODO: Cambiar por Navigator.pushReplacementNamed(context, 'favorites'),
+      onPressed: () => Navigator.pushNamed(context, 'favorites'),
     ),
   );
 }
