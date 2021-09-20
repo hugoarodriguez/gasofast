@@ -19,3 +19,7 @@ Color colorBlanco(){
 Color colorVerdeClaro(){
   return Color.fromRGBO(57, 165, 87, 1.0);
 }
+
+Color colorRojo(){
+  return Color.fromRGBO(194, 61, 61, 1.0);
+}

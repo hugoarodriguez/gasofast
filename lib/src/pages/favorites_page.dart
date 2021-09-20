@@ -16,18 +16,19 @@ class FavoritesPage extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop()
         ),
         title: Text('Favoritos', style: TextStyle(color: colorAzulOscuro()),),
+        centerTitle: true,
       ),
       body: Container(
         child: ListView.builder(
           itemCount: 3,
-          itemBuilder: (context, i) => _gasCardView(),
+          itemBuilder: (context, i) => _gasCardView(context),
         ),
       )
     );
   }
 }
 
-Widget _gasCardView(){
+Widget _gasCardView(BuildContext context){
   return Card(
     elevation: 10.0,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0) ),
@@ -42,13 +43,13 @@ Widget _gasCardView(){
             height: 115.0,
             ),
           ),
-        _contentRow()
+        _contentRow(context)
       ],
     ),
   );
 }
 
-Widget _contentRow(){
+Widget _contentRow(BuildContext context){
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: 10.0),
     child: Column(
@@ -67,13 +68,13 @@ Widget _contentRow(){
         //Reemplazar por infomación dinámica
         Text('Abierto las 24 horas', style: TextStyle(color: colorVerdeClaro(), fontSize: 15.0, fontWeight: FontWeight.bold ),),
         SizedBox(height: 15.0) ,
-        _buttonsRow()
+        _buttonsRow(context)
       ],
     ),
   );
 }
 
-Widget _buttonsRow(){
+Widget _buttonsRow(BuildContext context){
 
   return Padding(
     padding: EdgeInsets.only(bottom: 15.0),
@@ -94,6 +95,7 @@ Widget _buttonsRow(){
             child: Text('Precios', style: TextStyle(color: colorAzulOscuro(), fontSize: 12.0 ),),
             onPressed: (){
               //Redirigir a página "Precios"
+              Navigator.pushNamed(context, 'prices');
             },
             style: cardButtonStyleLight(),
           ),
