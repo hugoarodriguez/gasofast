@@ -17,8 +17,10 @@ class PricesPage extends StatelessWidget {
         title: Text('Texaco Caribe', style: TextStyle(color: colorAzulOscuro()),),
         centerTitle: true,
       ),
-      body: Container(
-        child: _content(),
+      body: SingleChildScrollView(
+        child: Container(
+          child: _content(),
+        ),
       ),
     );
   }

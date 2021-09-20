@@ -30,17 +30,16 @@ Widget _content(){
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Text('Esta Aplicación Fue Desarrollada Por', textAlign: TextAlign.center,style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold ),),
         ),
-        SizedBox(height: 20.0,),
-        _fuels()
+        _developers()
       ],
     ),
   );
 }
 
-Widget _fuels(){
+Widget _developers(){
   return Column(
     children: <Widget>[
       _developer('Alvarado Henríquez, Sofía Michelle', '25-3152-2017'),
@@ -67,13 +66,13 @@ Widget _developer(String developerName, String developerId){
       height: 60.0,
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(developerName, style: TextStyle(color: Colors.white, fontSize: 14.0 ) ),
-                SizedBox(height: 10.0,),
-                Text(developerId, style: TextStyle(color: Colors.white, fontSize: 14.0 ),),
-              ],
-            ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(developerName, style: TextStyle(color: Colors.white, fontSize: 14.0 ) ),
+          SizedBox(height: 10.0,),
+          Text(developerId, style: TextStyle(color: Colors.white, fontSize: 14.0 ),),
+        ],
+      ),
     ),
   );
 }

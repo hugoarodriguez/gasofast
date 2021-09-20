@@ -105,6 +105,7 @@ Widget _buttonsRow(BuildContext context){
             child: Text('Ver ofertas', style: TextStyle(color: colorAzulOscuro(), fontSize: 12.0 ),),
             onPressed: (){
               //Redirigir a página "Ofertas"
+              Navigator.pushNamed(context, 'offers');
             },
             style: cardButtonStyleLight(),
           ),
