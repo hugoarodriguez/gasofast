@@ -3,6 +3,7 @@ import 'package:gasofast/src/pages/about_page.dart';
 
 import 'package:gasofast/src/pages/change_password_page.dart';
 import 'package:gasofast/src/pages/favorites_page.dart';
+import 'package:gasofast/src/pages/locations_page.dart';
 import 'package:gasofast/src/pages/login_page.dart';
 import 'package:gasofast/src/pages/offers_page.dart';
 import 'package:gasofast/src/pages/prices_page.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         'prices'      : (BuildContext context) => PricesPage(),
         'about'       : (BuildContext context) => AboutPage(),
         'offers'      : (BuildContext context) => OffersPage(),
+        'locations'   : (BuildContext context) => LocationsPage(),
       },
     );
   }

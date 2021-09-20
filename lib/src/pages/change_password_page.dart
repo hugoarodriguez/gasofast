@@ -24,7 +24,7 @@ Widget _backButton(BuildContext context){
     elevation: 0.0,
     backgroundColor: Colors.transparent,
     child: Icon(Icons.arrow_back),
-    onPressed: (){ print('Volver a la pantalla de inicio'); },
+    onPressed: () => Navigator.of(context).pop(),
   );
 }
 

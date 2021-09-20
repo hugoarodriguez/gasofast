@@ -126,7 +126,7 @@ Widget _crearButton(BuildContext context){
       ),
       style: estiloBoton,
       //TODO: Cambiar por Navigator.pushReplacementNamed(context, 'favorites'),
-      onPressed: () => Navigator.pushNamed(context, 'favorites'),
+      onPressed: () => Navigator.pushNamed(context, 'locations'),
     ),
   );
 }
