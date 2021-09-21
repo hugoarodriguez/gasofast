@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:gasofast/src/utils/colors_utils.dart';
@@ -60,7 +62,15 @@ Widget _searchBar(BuildContext context){
     margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0 ),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10.0),
-      color: Colors.white
+      color: Colors.white,
+      boxShadow: <BoxShadow>[
+        BoxShadow(
+          color: Colors.black,
+          blurRadius: 5.0,
+          offset: Offset(0.0, 2.0),
+          spreadRadius: 1.0
+        )
+      ]
     ),
     child: Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.0 ),
@@ -86,9 +96,11 @@ enum MenuOptions { favorites, changepwd, about, exit }
 
 //Menú flotante
 Widget _popUpMenu(BuildContext context){
+
+
   return PopupMenuButton<MenuOptions>(
-    offset: Offset(0.0, 50.0),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    offset: Offset(0.0, 55.0),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),),
     icon: CircleAvatar(
       child: Icon(Icons.person_outlined),
       backgroundColor: colorAzulOscuro(),
