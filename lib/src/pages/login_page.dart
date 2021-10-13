@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:gasofast/src/utils/utils.dart';
+import 'package:gasofast/src/bloc/provider.dart';
+import 'package:gasofast/src/utils/utils.dart' as utils;
 
 class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          crearFondo(context),
-          _loginForm(context)
-        ],
+      backgroundColor: Color.fromRGBO(63, 114, 175, 1.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              utils.crearFondo(context),
+              _loginForm(context)
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -18,6 +24,9 @@ class LoginPage extends StatelessWidget {
 
 //Widget que contiene todo el formulario Login
 Widget _loginForm(BuildContext context){
+
+  final bloc = Provider.of(context);
+
   final size = MediaQuery.of(context).size;
 
   return SingleChildScrollView(
@@ -25,7 +34,7 @@ Widget _loginForm(BuildContext context){
       children: <Widget>[
         SafeArea(
           child: Container(
-            height: 120.0,
+            height: 180.0,
           ),
         ),
 
@@ -49,7 +58,7 @@ Widget _loginForm(BuildContext context){
             children: <Widget>[
               Text('Login', style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold )),
                 SizedBox(height: 10.0),
-                _crearEmail(),
+                _crearEmail(bloc),
                 SizedBox(height: 20.0),
                 _crearPassword(),
                 SizedBox(height: 20.0),
@@ -67,7 +76,7 @@ Widget _loginForm(BuildContext context){
           child: Text('¿Olvidaste tu contraseña?', style: TextStyle(color: Colors.white ),),
           onPressed: () => Navigator.pushReplacementNamed(context, 'recoveracc')
         ),
-
+        
       ],
     ),
   );
@@ -75,17 +84,27 @@ Widget _loginForm(BuildContext context){
 }
 
 //Widget para el TextField del Email
-Widget _crearEmail(){
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-    child: TextField(
-      keyboardType: TextInputType.emailAddress,
-      decoration: InputDecoration(
-        icon: Icon(Icons.alternate_email_rounded),
-        hintText: 'ejemplo@correo.com',
-        labelText: 'Correo',
-      )
-    ),
+Widget _crearEmail(LoginBloc bloc){
+  return StreamBuilder(
+    stream: bloc.emailStream,
+    builder: (BuildContext context, AsyncSnapshot snapshot){
+      
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        child: TextField(
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            icon: Icon(Icons.alternate_email_rounded),
+            hintText: 'ejemplo@correo.com',
+            labelText: 'Correo',
+            counterText: snapshot.data  != null ? 'Correo válido' : null,
+            errorText: snapshot.error != null ? snapshot.error.toString() : null
+          ),
+          onChanged: bloc.changeEmail,//El primer parámetro enviado al 'onChanged:' se pasa al 'bloc.changeEmail'
+        ),
+      );
+
+    }
   );
 }
 
@@ -125,7 +144,7 @@ Widget _crearButton(BuildContext context){
         child: Text('Ingresar', style: TextStyle(color: Colors.black) ,),
       ),
       style: estiloBoton,
-      //TODO: Cambiar por Navigator.pushReplacementNamed(context, 'favorites'),
+      //TODO: Cambiar por método _login() para validar inicio de sesión con Firebase
       onPressed: () => Navigator.pushNamed(context, 'locations'),
     ),
   );

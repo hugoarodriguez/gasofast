@@ -10,7 +10,11 @@ import 'package:gasofast/src/pages/prices_page.dart';
 import 'package:gasofast/src/pages/recover_account_page.dart';
 import 'package:gasofast/src/pages/signup_page.dart';
 
-void main() => runApp(MyApp());
+void main(){ 
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

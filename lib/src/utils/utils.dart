@@ -35,20 +35,14 @@ Widget crearFondo(BuildContext context){
     ),
   );
 
-  final fondoAzulClaro = Container(
-    height: size.height * 0.50,
-    width: double.infinity,
+  final fondo = Container(
+    child: Stack(
+      children: <Widget>[
+        fondoAzulOscuro
+      ],
+    ),
     decoration: BoxDecoration(
       color: Color.fromRGBO(63, 114, 175, 1.0)
-    ),
-  );
-
-  final fondo = Container(
-    child: Column(
-      children: <Widget>[
-        fondoAzulOscuro,
-        fondoAzulClaro
-      ],
     ),
   );
 
