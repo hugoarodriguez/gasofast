@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1078399039585",
+    "firebase_url": "https://gasofastf-default-rtdb.firebaseio.com",
+    "project_id": "gasofastf",
+    "storage_bucket": "gasofastf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078399039585:android:30a53ea328870875805220",
+        "android_client_info": {
+          "package_name": "com.example.gasofast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078399039585-h3hjn083m4t0749tid7f38bagggpn526.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdY-sRcaf-7O53VfOnfTH7TTTbY572SyQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078399039585-h3hjn083m4t0749tid7f38bagggpn526.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

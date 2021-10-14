@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gasofast/src/pages/about_page.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
+import 'package:gasofast/src/pages/about_page.dart';
 import 'package:gasofast/src/pages/change_password_page.dart';
 import 'package:gasofast/src/pages/favorites_page.dart';
 import 'package:gasofast/src/pages/locations_page.dart';
@@ -10,9 +11,9 @@ import 'package:gasofast/src/pages/prices_page.dart';
 import 'package:gasofast/src/pages/recover_account_page.dart';
 import 'package:gasofast/src/pages/signup_page.dart';
 
-void main(){ 
+void main() async { 
   WidgetsFlutterBinding.ensureInitialized();
-  
+  await firebase_core.Firebase.initializeApp();
   runApp(MyApp());
 }
 
