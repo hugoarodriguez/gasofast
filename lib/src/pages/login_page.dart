@@ -60,7 +60,7 @@ Widget _loginForm(BuildContext context){
                 SizedBox(height: 10.0),
                 _crearEmail(bloc),
                 SizedBox(height: 20.0),
-                _crearPassword(),
+                _crearPassword(bloc),
                 SizedBox(height: 20.0),
                 _crearButton(context),
                 SizedBox(height: 10.0),
@@ -109,16 +109,24 @@ Widget _crearEmail(LoginBloc bloc){
 }
 
 //Widget para el TextField de la Password
-Widget _crearPassword(){
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 20.0),
-    child: TextField(
-      obscureText: true,
-      decoration: InputDecoration(
-        icon: Icon(Icons.lock_outline_rounded),
-        labelText: 'Contraseña',
-      )
-    ),
+Widget _crearPassword(LoginBloc bloc){
+  return StreamBuilder(
+    stream: bloc.passwordStream,
+    builder: (BuildContext context, AsyncSnapshot snapshot){
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        child: TextField(
+          obscureText: true,
+          decoration: InputDecoration(
+            icon: Icon(Icons.lock_outline_rounded),
+            labelText: 'Contraseña',
+            counterText: snapshot.data  != null ? 'Contraseña válida' : null,
+            errorText: snapshot.error != null ? snapshot.error.toString() : null
+          ),
+          onChanged: bloc.changePassword,
+        ),
+      );
+    }
   );
 }
 

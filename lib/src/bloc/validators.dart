@@ -29,7 +29,7 @@ class Validators{
       if(regExp.hasMatch(password)){
         sink.add(password);
       } else {
-        sink.addError('Formato de contraseña incorrecto');
+        sink.addError('Debe contener al menos 8 carácteres: \n+ Una mayúscula \n+ Una mínuscula \n+ Un número \n+ Un carácter especial');
       }
     }
   );
