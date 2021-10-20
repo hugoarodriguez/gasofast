@@ -42,9 +42,9 @@ Widget _content(){
 Widget _offers(){
   return Column(
     children: <Widget>[
-      _offer('https://scontent-mia3-1.xx.fbcdn.net/v/t1.6435-9/228863650_2925651757676343_2482445850995764283_n.jpg?_nc_cat=100&ccb=1-5&_nc_sid=730e14&_nc_ohc=1ymdC-3UtdMAX_Iu-lx&_nc_ht=scontent-mia3-1.xx&oh=7a7d2baefa385824f22900d6b5528bf1&oe=616BDB8E'),
+      _offer('https://firebasestorage.googleapis.com/v0/b/gasofastf.appspot.com/o/offers%2Ftexaco%2FPromocionJuega.png?alt=media&token=de17f92d-827e-4dbd-966c-4cd84fd3fc76'),
       SizedBox(height: 20.0,),
-      _offer('https://scontent-mia3-1.xx.fbcdn.net/v/t1.6435-9/229198922_2923772724530913_5528591209936415093_n.jpg?_nc_cat=100&ccb=1-5&_nc_sid=730e14&_nc_ohc=k04cynmzLf4AX9bb8D8&tn=8ADJkxdl2lOQ7rEb&_nc_ht=scontent-mia3-1.xx&oh=08fe64f5b18f5939897e652a3f574cd8&oe=616C3B07'),
+      _offer('https://firebasestorage.googleapis.com/v0/b/gasofastf.appspot.com/o/offers%2Ftexaco%2FPuntosTexaco.jpg?alt=media&token=90acc4f6-09fb-42da-981d-50667d24610b'),
       SizedBox(height: 20.0,),
     ],
   );

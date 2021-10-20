@@ -115,8 +115,10 @@ class LocationsPage extends StatelessWidget {
         } else if(result.index == 2){
           Navigator.pushNamed(context, 'about');
         } else if(result.index == 3){
+
           usuarioProvider.signOut();
           Navigator.pushReplacementNamed(context, 'login');
+          
         }
 
       },

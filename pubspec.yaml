@@ -33,6 +33,7 @@ dependencies:
   http:
   firebase_core: ^1.7.0
   firebase_auth: ^3.1.3
+  firebase_storage: ^10.0.4
 
 dev_dependencies:
   flutter_test:
