@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 //import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
@@ -11,12 +8,9 @@ class UsuarioProvider{
   firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
   get currentUser => auth.currentUser;
 
-  final String _firebaseKey = 'AIzaSyBxPFBtYCmHetoMmlAoYRssQRsoGlCavgg';
   //final _prefs = new PreferenciasUsuario();
 
   Future<Map<String, dynamic>> login(String? email, String? password) async {
-    print('Email $email');
-    print('Password: $password');
 
     try {
       if(email != null && password != null){
@@ -42,31 +36,33 @@ class UsuarioProvider{
     return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
   }
 
-  Future<Map<String, dynamic>> nuevoUsuario(String email, String password) async {
+  Future<Map<String, dynamic>> nuevoUsuario(String? email, String? password, String? passwordc) async {
 
-    final authData = {
-      'email'     : email,
-      'password'  : password,
-      'returnSecureToken' : true
-    };
-    
-    final resp = await http.post(
-      Uri.parse('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_firebaseKey'),
-      body: json.encode(authData)
-    );
+    try {
+      if(email != null && password != null && passwordc != null){
+        if(password == passwordc){
+          await firebase_auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: email,
+            password: password
+            );
 
-    Map<String, dynamic> decodedResp = json.decode(resp.body);
+          return { 'ok': true };
+        } else {
+          return { 'ok': false, 'mensaje': '¡Las contraseñas deben coincidir!' };
+        }
+      } else {
+        return { 'ok': false, 'mensaje': '¡Ingrese correo, contraseña y confirme la contraseña!' };
+      }
 
-    print(decodedResp);
-
-    if(decodedResp.containsKey('idToken')){
-      
-      //_prefs.token = decodedResp['idToken'];
-
-      return { 'ok': true, 'token': decodedResp['idToken'] };
-    } else {
-      return { 'ok': false, 'mensaje': decodedResp['error']['message']};
+      } on firebase_auth.FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return { 'ok': false, 'mensaje': '¡Ya existe un usuario registrado con ese email!' };
+      } else {
+        print('Error: ' + e.code);
+      }
     }
+
+    return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
   }
 
   //Cerrar sesión

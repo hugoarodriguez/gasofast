@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
   //Widget que contiene todo el formulario Login
   Widget _loginForm(BuildContext context){
 
-    final bloc = Provider.of(context);
+    final bloc = Provider.ofLogin(context);
 
     final size = MediaQuery.of(context).size;
 

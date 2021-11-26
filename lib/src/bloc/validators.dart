@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 
 class Validators{
@@ -28,6 +26,21 @@ class Validators{
 
       if(regExp.hasMatch(password)){
         sink.add(password);
+      } else {
+        sink.addError('Debe contener al menos 8 carácteres: \n+ Una mayúscula \n+ Una mínuscula \n+ Un número \n+ Un carácter especial');
+      }
+    }
+  );
+
+  final validarPasswordC = StreamTransformer<String, String>.fromHandlers(
+    handleData: (passwordC, sink){
+      //Patrón para comparar la contraseña
+      String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+      
+      RegExp regExp = new RegExp(pattern);
+
+      if(regExp.hasMatch(passwordC)){
+        sink.add(passwordC);
       } else {
         sink.addError('Debe contener al menos 8 carácteres: \n+ Una mayúscula \n+ Una mínuscula \n+ Un número \n+ Un carácter especial');
       }

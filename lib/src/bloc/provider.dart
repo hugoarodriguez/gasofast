@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:gasofast/src/bloc/login_bloc.dart';
+import 'package:gasofast/src/bloc/register_bloc.dart';
 export 'package:gasofast/src/bloc/login_bloc.dart';
 
 class Provider extends InheritedWidget{
 
   final loginBloc = LoginBloc();
+  final registerBloc = RegisterBloc();
 
   static late Provider _instancia;
 
@@ -23,7 +25,7 @@ class Provider extends InheritedWidget{
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
   //Esta función busca entre todo el árbol de Widgets y retorna la instancia del bloc 'loginBloc' basado en el 'context'
-  static LoginBloc of ( BuildContext context ){
+  static LoginBloc ofLogin ( BuildContext context ){
     final loginBlocN = LoginBloc();
 
     /*if(context.dependOnInheritedWidgetOfExactType<Provider>() != null){
@@ -35,6 +37,17 @@ class Provider extends InheritedWidget{
     context.dependOnInheritedWidgetOfExactType<Provider>()!.loginBloc
     :
     loginBlocN;
+  }
+
+  //Esta función busca entre todo el árbol de Widgets y retorna la instancia del bloc 'registerBloc' basado en el 'context'
+  static RegisterBloc ofRegister ( BuildContext context ){
+    final registerBlocN = RegisterBloc();
+
+    return context.dependOnInheritedWidgetOfExactType<Provider>() != null 
+    ? 
+    context.dependOnInheritedWidgetOfExactType<Provider>()!.registerBloc
+    :
+    registerBlocN;
   }
 
 }
