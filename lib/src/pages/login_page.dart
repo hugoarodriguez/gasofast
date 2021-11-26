@@ -186,7 +186,10 @@ class LoginPage extends StatelessWidget {
       //Redireccionamos a la pantalla Locations
       Navigator.pushNamed(context, 'locations');
     } else {
-      print(info['mensaje']);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
+      );
     }
   }
 }
