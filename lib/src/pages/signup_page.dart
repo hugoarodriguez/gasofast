@@ -202,10 +202,14 @@ class SignUpPage extends StatelessWidget {
           currentFocus.unfocus();
         }
 
-        //Redireccionamos a la pantalla Locations
-        Navigator.pushNamed(context, 'locations');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.green.shade400,)
+        );
+
+        //Redireccionamos a la pantalla Login para que inicie sesión luego de autenticar su email
+        Navigator.pushNamed(context, 'login');
       } else {
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
         );

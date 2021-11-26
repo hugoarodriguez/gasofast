@@ -18,7 +18,18 @@ class UsuarioProvider{
             email: email,
             password: password
           );
-        return { 'ok': true };
+        
+        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+        if (user!= null && !user.emailVerified) {
+          await user.sendEmailVerification();//Solicitamos la verificación del email
+          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        }
+        else {
+          
+          return { 'ok': true };
+        }
+
       } else {
         return { 'ok': false, 'mensaje': '¡Ingrese usuario y contraseña!' };
       }
@@ -46,7 +57,17 @@ class UsuarioProvider{
             password: password
             );
 
-          return { 'ok': true };
+          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+          if (user!= null && !user.emailVerified) {
+            await user.sendEmailVerification();//Solicitamos la verificación del email
+            return { 'ok': true, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+          }
+          else {
+            
+            return { 'ok': true, 'mensaje': '¡Cuenta registrada! Inicia sesión' };
+          }
+
         } else {
           return { 'ok': false, 'mensaje': '¡Las contraseñas deben coincidir!' };
         }
@@ -62,7 +83,7 @@ class UsuarioProvider{
       }
     }
 
-    return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+    return { 'ok': false, 'mensaje': '¡No se pudo crear la cuenta intente mas tarde!' };
   }
 
   //Cerrar sesión
