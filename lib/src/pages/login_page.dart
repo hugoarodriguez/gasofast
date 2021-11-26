@@ -9,6 +9,10 @@ class LoginPage extends StatelessWidget {
 
   final usuarioProvider = UsuarioProvider();
 
+  //Controladores
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return _mainScaffold(context);
@@ -100,6 +104,7 @@ class LoginPage extends StatelessWidget {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: TextField(
+            controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               icon: Icon(Icons.alternate_email_rounded),
@@ -124,6 +129,7 @@ class LoginPage extends StatelessWidget {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: TextField(
+            controller: _passwordController,
             obscureText: true,
             decoration: InputDecoration(
               icon: Icon(Icons.lock_outline_rounded),
@@ -186,6 +192,10 @@ class LoginPage extends StatelessWidget {
       //Redireccionamos a la pantalla Locations
       Navigator.pushNamed(context, 'locations');
     } else {
+
+      //Limpiamos los campos del formulario
+      _emailController.text = '';
+      _passwordController.text = '';
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
