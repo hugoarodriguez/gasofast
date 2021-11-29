@@ -5,12 +5,12 @@ class GasolineraModel{
   String locationLatitude = '';
   String locationLongitude = ''; 
   String name = ''; 
-  String priceDiesel = '';
-  String priceEspecial = '';
-  String priceRegular = '';
+  double priceDiesel = 0.0;
+  double priceEspecial = 0.0;
+  double priceRegular = 0.0;
 
-  GasolineraModel(String id, String locationLatitude, String locationLongitude, String name, String priceDiesel, 
-  String priceEspecial, String priceRegular){
+  GasolineraModel(String id, String locationLatitude, String locationLongitude, String name, double priceDiesel, 
+  double priceEspecial, double priceRegular){
     this.id = id;
     this.locationLatitude = locationLatitude;
     this.locationLongitude = locationLongitude;

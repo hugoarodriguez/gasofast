@@ -5,7 +5,7 @@ class GasolineraProvider{
 
   final cloud_firestore.FirebaseFirestore _firestore = cloud_firestore.FirebaseFirestore.instance;
 
-  Future<List<GasolineraModel>> getUsuarios() async {
+  Future<List<GasolineraModel>> getGasolineras() async {
     List<GasolineraModel> gasolinerasList = [];
 
     cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations');
@@ -32,5 +32,5 @@ class GasolineraProvider{
       doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular']));
 
     return gasolinerasList;
-  } 
+  }
 }

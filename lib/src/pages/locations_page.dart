@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:gasofast/src/providers/usuario_provider.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
 import 'package:gasofast/src/widgets/fuel_station_widget.dart';
@@ -9,11 +12,33 @@ import 'package:gasofast/src/widgets/fuel_station_widget.dart';
 //Creamos un enum con las opciones del Menú
   enum MenuOptions { favorites, changepwd, about, exit }
 
-class LocationsPage extends StatelessWidget {
-  final usuarioProvider = UsuarioProvider();
-  
+class LocationsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
+  State<LocationsPage> createState() => _LocationsPageState();
+}
+
+class _LocationsPageState extends State<LocationsPage> {
+  
+  final usuarioProvider = UsuarioProvider();
+
+  final gasolineraProvider = GasolineraProvider();
+
+  Completer<GoogleMapController> _controller = Completer();
+  MapType mapType = MapType.normal;
+
+  //Marcadores
+  Set<Marker> markers = Set<Marker>();
+
+  CameraPosition puntoInicial = CameraPosition(
+      target: LatLng(13.700667619304799, -89.2249587653901),
+      zoom: 15,
+      tilt: 50.0,
+    );
+
+  @override
+  Widget build(BuildContext context) {    
+    _createMarkers();
+
     return Scaffold(
       body: Container(
         child: _content(context)
@@ -21,45 +46,64 @@ class LocationsPage extends StatelessWidget {
     );
   }
 
-  //Contenido completo
+  void _createMarkers() async {
+    List items = await gasolineraProvider.getGasolineras();
+
+    puntoInicial = CameraPosition(
+      target: LatLng(double.parse(items[0].locationLatitude), double.parse(items[0].locationLongitude)),
+      zoom: 15,
+      tilt: 50.0,
+    );
+
+    for (var i = 0; i < items.length; i++) {
+      markers.add(Marker(
+        markerId: MarkerId(items[i].id),
+        position: LatLng(double.parse(items[i].locationLatitude), double.parse(items[i].locationLongitude)),
+        infoWindow: InfoWindow(
+          title: items[i].name,
+          snippet: items[i].name,
+          onTap: (){
+            
+          }
+        ),
+      ));
+    }
+  }
+
   Widget _content(BuildContext context){
     return SafeArea(
       child: Stack(
         children: <Widget>[
-          Container(
-            child: Image(
-              image: AssetImage('assets/images/GoogleMaps.jpg'),
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+          GoogleMap(
+            markers: markers,
+            zoomControlsEnabled: false,
+            mapType: mapType,
+            initialCameraPosition: puntoInicial,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
           ),
-          _frontContent(context)
+          _frontContent(context),
+          _favoritesFAB(context),
+          _locateFAB(context),
+          
         ],
       ),
     );
   }
 
-  //Contenido frontal completo
   Widget _frontContent(BuildContext context){
     return SingleChildScrollView(
       child: Container(
         child: Column(
           children: <Widget>[
             _searchBar(context),
-            _favoritesFAB(context),
-            _locateFAB(context),
-            FuelStation(
-              gasStationName: 'Texaco Caribe',
-              gasStationSchedule: 'Abierto las 24 horas',
-              gasStationUrlImg: 'https://becaselsalvador.com/wp-content/uploads/2021/02/Empleo-en-Texaco-1024x535.jpg',
-            )
           ],
         ),
       ),
     );
   }
 
-  //Barra de Búsqueda
   Widget _searchBar(BuildContext context){
 
     return Container(
@@ -95,7 +139,6 @@ class LocationsPage extends StatelessWidget {
     );
   }
 
-  //Menú flotante
   Widget _popUpMenu(BuildContext context){
 
 
@@ -171,12 +214,11 @@ class LocationsPage extends StatelessWidget {
     );
   }
 
-  //FloatingActionButton para acceder a la pantalla de Favoritos
   Widget _favoritesFAB(BuildContext context){
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.28,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.85,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'favoritesFAB',
         backgroundColor: colorAzulOscuro(),
@@ -186,12 +228,11 @@ class LocationsPage extends StatelessWidget {
     );
   }
 
-  //FloatingActionButton para encontrar la ubicación actual del usuario
   Widget _locateFAB(BuildContext context){
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.01,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.75,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'locateFAB',
         backgroundColor: colorAzulOscuro(),
@@ -202,6 +243,5 @@ class LocationsPage extends StatelessWidget {
       ),
     );
   }
-
 }
 
