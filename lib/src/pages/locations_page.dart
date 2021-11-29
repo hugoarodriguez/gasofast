@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:gasofast/src/bloc/map_bloc.dart';
+import 'package:gasofast/src/bloc/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:gasofast/src/providers/gasolinera_provider.dart';
@@ -21,8 +23,6 @@ class _LocationsPageState extends State<LocationsPage> {
   
   final usuarioProvider = UsuarioProvider();
 
-  final gasolineraProvider = GasolineraProvider();
-
   Completer<GoogleMapController> _controller = Completer();
   MapType mapType = MapType.normal;
 
@@ -36,59 +36,49 @@ class _LocationsPageState extends State<LocationsPage> {
     );
 
   @override
-  Widget build(BuildContext context) {    
-    _createMarkers();
+  Widget build(BuildContext context) {
+    final mapBloc = Provider.ofMap(context);
 
     return Scaffold(
       body: Container(
-        child: _content(context)
+        child: _fullContent(context, mapBloc)
       ),
     );
   }
 
-  void _createMarkers() async {
-    List items = await gasolineraProvider.getGasolineras();
+  Widget _fullContent(BuildContext context, MapBloc bloc){
+    return StreamBuilder(
+      stream: bloc.markersStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
 
-    puntoInicial = CameraPosition(
-      target: LatLng(double.parse(items[0].locationLatitude), double.parse(items[0].locationLongitude)),
-      zoom: 15,
-      tilt: 50.0,
-    );
+        if(snapshot.hasData){
 
-    for (var i = 0; i < items.length; i++) {
-      markers.add(Marker(
-        markerId: MarkerId(items[i].id),
-        position: LatLng(double.parse(items[i].locationLatitude), double.parse(items[i].locationLongitude)),
-        infoWindow: InfoWindow(
-          title: items[i].name,
-          snippet: items[i].name,
-          onTap: (){
-            
-          }
-        ),
-      ));
-    }
-  }
-
-  Widget _content(BuildContext context){
-    return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          GoogleMap(
-            markers: markers,
-            zoomControlsEnabled: false,
-            mapType: mapType,
-            initialCameraPosition: puntoInicial,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
-          ),
-          _frontContent(context),
-          _favoritesFAB(context),
-          _locateFAB(context),
-          
-        ],
-      ),
+          return SafeArea(
+            child: Stack(
+              children: <Widget>[
+                GoogleMap(
+                  markers: Set<Marker>.of(
+                    snapshot.data.length > 0 
+                    ? snapshot.data
+                    : []),
+                  zoomControlsEnabled: false,
+                  mapType: mapType,
+                  initialCameraPosition: puntoInicial,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                ),
+                _frontContent(context),
+                _favoritesFAB(context),
+                _locateFAB(context),
+                
+              ],
+            ),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      }
     );
   }
 

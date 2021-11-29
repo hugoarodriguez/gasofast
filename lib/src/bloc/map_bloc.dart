@@ -1,25 +1,24 @@
 import 'dart:async';
 
+import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MapBloc{
 
-  Completer<GoogleMapController> _controller = Completer();
-  MapType mapType = MapType.normal;
+  final gasolineraProvider = GasolineraProvider();
+  final _markersController = BehaviorSubject<Set<Marker>>();
 
   //Marcadores
   Set<Marker> _markers = Set<Marker>();
 
-  final _mapTypeController = BehaviorSubject<MapType>();
-  final _mapController = BehaviorSubject<Completer<GoogleMapController>>();
-
-  MapBloc(data){
-    _createMarkers(data);
+  MapBloc(){
+    _createMarkers();
   }
 
-  void _createMarkers(data){
-    List items = data;
+  //Crear los marcadores
+  void _createMarkers() async {
+    List items = await gasolineraProvider.getGasolineras();
 
     for (var i = 0; i < items.length; i++) {
       _markers.add(Marker(
@@ -34,5 +33,16 @@ class MapBloc{
         ),
       ));
     }
+
+    _markersController.sink.add(_markers);
   }
+
+  //Obtener el último valor ingresado a los Streams
+  Stream<Set<Marker>> get markersStream => _markersController.stream;
+
+  //Limpiar los Streams
+  dispose(){
+    _markersController.close();
+  }
+  
 }
