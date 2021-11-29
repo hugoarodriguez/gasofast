@@ -3,6 +3,8 @@
    <application
         android:label="gasofast"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCAVdUer1AAO8tdtqjVtpcTb7M1pq6GMQk"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
