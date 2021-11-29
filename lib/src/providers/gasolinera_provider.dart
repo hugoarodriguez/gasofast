@@ -1,93 +1,36 @@
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-//import 'package:firebase_core/firebase_core.dart' as firebase_core;
-
-//import 'package:gasofast/src/preferencias_usuario/preferencias_usuario.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as cloud_firestore;
+import 'package:gasofast/src/models/gasolinera_model.dart';
 
 class GasolineraProvider{
-  
-  firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
-  get currentUser => auth.currentUser;
 
-  //final _prefs = new PreferenciasUsuario();
+  final cloud_firestore.FirebaseFirestore _firestore = cloud_firestore.FirebaseFirestore.instance;
 
-  Future<Map<String, dynamic>> login(String? email, String? password) async {
+  Future<List<GasolineraModel>> getUsuarios() async {
+    List<GasolineraModel> gasolinerasList = [];
 
-    try {
-      if(email != null && password != null){
-        await firebase_auth.FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: email,
-            password: password
-          );
-        
-        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+    cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations');
 
-        if (user!= null && !user.emailVerified) {
-          await user.sendEmailVerification();//Solicitamos la verificación del email
-          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
-        }
-        else {
-          
-          return { 'ok': true };
-        }
-
-      } else {
-        return { 'ok': false, 'mensaje': '¡Ingrese usuario y contraseña!' };
-      }
-
-      } on firebase_auth.FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        return { 'ok': false, 'mensaje': '¡No existe un usuario registrado con ese email!' };
-      } else if (e.code == 'wrong-password') {
-        return { 'ok': false, 'mensaje': '¡Contraseña incorrecta!' };
-      } else {
-        print('Error: ' + e.code);
-      }
+    final cloud_firestore.QuerySnapshot result = await reference.get();
+    final List<cloud_firestore.DocumentSnapshot> documents = result.docs;
+    
+    for (var doc in documents) { 
+      gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
+      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular']));
     }
 
-    return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+    return gasolinerasList;
   }
 
-  Future<Map<String, dynamic>> nuevoUsuario(String? email, String? password, String? passwordc) async {
+  Future<List<GasolineraModel>> getGasolinera(String idUsuario) async {
+    List<GasolineraModel> gasolinerasList = [];
 
-    try {
-      if(email != null && password != null && passwordc != null){
-        if(password == passwordc){
-          await firebase_auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password: password
-            );
+    cloud_firestore.CollectionReference reference  = _firestore.collection('usuarios');
 
-          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+    final cloud_firestore.DocumentSnapshot doc = await reference.doc(idUsuario).get();
+    
+    gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
+      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular']));
 
-          if (user!= null && !user.emailVerified) {
-            await user.sendEmailVerification();//Solicitamos la verificación del email
-            return { 'ok': true, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
-          }
-          else {
-            
-            return { 'ok': true, 'mensaje': '¡Cuenta registrada! Inicia sesión' };
-          }
-
-        } else {
-          return { 'ok': false, 'mensaje': '¡Las contraseñas deben coincidir!' };
-        }
-      } else {
-        return { 'ok': false, 'mensaje': '¡Ingrese correo, contraseña y confirme la contraseña!' };
-      }
-
-      } on firebase_auth.FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        return { 'ok': false, 'mensaje': '¡Ya existe un usuario registrado con ese email!' };
-      } else {
-        print('Error: ' + e.code);
-      }
-    }
-
-    return { 'ok': false, 'mensaje': '¡No se pudo crear la cuenta intente mas tarde!' };
-  }
-
-  //Cerrar sesión
-  Future signOut() async {
-    await auth.signOut();
-  }
+    return gasolinerasList;
+  } 
 }
