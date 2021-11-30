@@ -9,7 +9,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:gasofast/src/providers/usuario_provider.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
-import 'package:gasofast/src/widgets/fuel_station_widget.dart';
 
 //Creamos un enum con las opciones del Menú
   enum MenuOptions { favorites, changepwd, about, exit }
@@ -22,6 +21,8 @@ class LocationsPage extends StatefulWidget {
 class _LocationsPageState extends State<LocationsPage> {
   
   final usuarioProvider = UsuarioProvider();
+  final gasolineraProvider = GasolineraProvider();
+  List<Widget> _listadoWidgets = [];
 
   Completer<GoogleMapController> _controller = Completer();
   MapType mapType = MapType.normal;
@@ -47,33 +48,61 @@ class _LocationsPageState extends State<LocationsPage> {
   }
 
   Widget _fullContent(BuildContext context, MapBloc bloc){
-    return StreamBuilder(
-      stream: bloc.markersStream,
+    return FutureBuilder(
+      future: gasolineraProvider.getGasolineras(),
       builder: (BuildContext context, AsyncSnapshot snapshot){
 
         if(snapshot.hasData){
 
-          return SafeArea(
-            child: Stack(
-              children: <Widget>[
-                GoogleMap(
-                  markers: Set<Marker>.of(
-                    snapshot.data.length > 0 
-                    ? snapshot.data
-                    : []),
-                  zoomControlsEnabled: false,
-                  mapType: mapType,
-                  initialCameraPosition: puntoInicial,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                ),
-                _frontContent(context),
-                _favoritesFAB(context),
-                _locateFAB(context),
+          bloc.createMarkers(snapshot.data, _listadoWidgets);
+
+          return StreamBuilder(
+            stream: bloc.markersStream,
+            builder: (BuildContext context, AsyncSnapshot snapshotMarkers){
+
+              if(snapshotMarkers.hasData){
+
+                _listadoWidgets = [
+                  GoogleMap(
+                    markers: Set<Marker>.of(
+                      snapshotMarkers.data.length > 0 
+                      ? snapshotMarkers.data
+                      : []),
+                    zoomControlsEnabled: false,
+                    mapType: mapType,
+                    initialCameraPosition: puntoInicial,
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                  ),
+                  _frontContent(context),
+                  _favoritesFAB(context),
+                  _locateFAB(context),
+                ];
                 
-              ],
-            ),
+                bloc.createWidgetList(_listadoWidgets);
+
+                return SafeArea(
+                  child: StreamBuilder<Object>(
+                    stream: bloc.listaWidgetStream,
+                    builder: (BuildContext context, AsyncSnapshot snapshotWidgets) {
+
+                      if(snapshotWidgets.hasData){
+                        return Stack(
+                          children: snapshotWidgets.data,
+                        );
+                      } else {
+                        return Stack(
+                          children: _listadoWidgets,
+                        );
+                      }
+                    }
+                  ),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }
           );
         } else {
           return Center(child: CircularProgressIndicator());

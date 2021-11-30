@@ -1,24 +1,27 @@
 import 'dart:async';
 
-import 'package:gasofast/src/providers/gasolinera_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:gasofast/src/widgets/fuel_station_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MapBloc{
 
-  final gasolineraProvider = GasolineraProvider();
   final _markersController = BehaviorSubject<Set<Marker>>();
+  final _visibilityController = BehaviorSubject<bool>();
+  final _listaWidgetsController = BehaviorSubject<List<Widget>>();
+
+
+  bool visibility = false;
 
   //Marcadores
   Set<Marker> _markers = Set<Marker>();
 
-  MapBloc(){
-    _createMarkers();
-  }
-
   //Crear los marcadores
-  void _createMarkers() async {
-    List items = await gasolineraProvider.getGasolineras();
+  void createMarkers(data, List<Widget> listaWidget) async {
+    List items = data;
+
+    _visibilityController.add(false);
 
     for (var i = 0; i < items.length; i++) {
       _markers.add(Marker(
@@ -28,6 +31,25 @@ class MapBloc{
           title: items[i].name,
           snippet: items[i].name,
           onTap: (){
+
+            listaWidget = _listaWidgetsController.value!;
+
+            if(listaWidget.length <= 4){
+              listaWidget.add(
+                Padding(
+                  padding: EdgeInsets.only(bottom: 500.0, top: 70.0),
+                  child: Visibility(
+                    visible: true,
+                    child: FuelStation(gasStationId: items[i].id),
+                  ),
+                )
+              );
+              _listaWidgetsController.sink.add(listaWidget);
+            } else {
+              listaWidget.removeLast();
+              _listaWidgetsController.sink.add(listaWidget);
+            }
+
             
           }
         ),
@@ -37,12 +59,27 @@ class MapBloc{
     _markersController.sink.add(_markers);
   }
 
+  void createWidgetList(List<Widget> listaWidget){
+    _listaWidgetsController.sink.add(listaWidget);
+  }
+
+  void addWidget(String idGasStation, List<Widget> listaWidget){
+
+  }
+
   //Obtener el último valor ingresado a los Streams
   Stream<Set<Marker>> get markersStream => _markersController.stream;
+  Stream<List<Widget>> get listaWidgetStream => _listaWidgetsController.stream;
+  Stream<bool> get visibilityStream => _visibilityController.stream;
+
+  //Obtener valor actual
+  bool get getVisibility => visibility;
 
   //Limpiar los Streams
   dispose(){
     _markersController.close();
+    _visibilityController.close();
+    _listaWidgetsController.close();
   }
   
 }
