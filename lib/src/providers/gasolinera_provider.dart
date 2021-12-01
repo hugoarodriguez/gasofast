@@ -41,7 +41,7 @@ class GasolineraProvider{
 
     try{
       
-      //Registrar
+      //Eliminar
       await reference.doc(gasolineraModel.id + uid).delete();
 
       //Si la subida salió bien se retorna 'true'
@@ -70,7 +70,7 @@ class GasolineraProvider{
 
     try{
       
-      //Registrar
+      //Consultar
       final cloud_firestore.DocumentSnapshot documentSnapshot = await reference.doc(idGasolineraFinal + uid).get();
 
       r = documentSnapshot.exists;//Retorna 'true' si existe, 'false' si no
@@ -95,6 +95,31 @@ class GasolineraProvider{
     for (var doc in documents) { 
       gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
       doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
+    }
+
+    return gasolinerasList;
+  }
+
+  //Método para obtener los datos de las OFERTAS de las gasolineras
+  Future<List<GasolineraModel>> getOfertasGasolineras(String idGasolinera) async {
+
+    String idGasolineraFinal = idGasolinera;
+
+    if(idGasolinera.contains('(')){
+      int indexParentesis1 = idGasolinera.indexOf('(');
+      int indexParentesis2 = idGasolinera.indexOf(')');
+      idGasolineraFinal = idGasolinera.substring(indexParentesis1 + 1, indexParentesis2);
+    }
+
+    List<GasolineraModel> gasolinerasList = [];
+
+    cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations_offers');
+
+    final cloud_firestore.QuerySnapshot result = await reference.where('id_gas_station', isEqualTo: idGasolineraFinal).get();
+    final List<cloud_firestore.DocumentSnapshot> documents = result.docs;
+    
+    for (var doc in documents) {
+      gasolinerasList.add(GasolineraModel.offers(doc['id_gas_station'], doc['cover_img']));
     }
 
     return gasolinerasList;

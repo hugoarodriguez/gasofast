@@ -149,6 +149,13 @@ class _LocationsPageState extends State<LocationsPage> {
                   border: InputBorder.none,
                   hintText: 'Buscar gasolinera',
                 ),
+                onTap: (){
+                  setState(() {
+                    if(_listadoWidgets.length > 4){
+                      _listadoWidgets.removeLast();
+                    }
+                  });
+                },
               ),
             ),
             _popUpMenu(context)

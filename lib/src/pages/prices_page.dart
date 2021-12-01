@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gasofast/src/models/gasolinera_model.dart';
 
+import 'package:gasofast/src/models/gasolinera_model.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
 
 class PricesPage extends StatelessWidget {

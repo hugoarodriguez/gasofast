@@ -23,4 +23,16 @@ class GasolineraModel{
     this.coverImg = coverImg;
     this.schedule = schedule;
   }
+
+  GasolineraModel.offers(String id, String coverImg){
+    this.id = '';
+    this.locationLatitude = '';
+    this.locationLongitude = '';
+    this.name = '';
+    this.priceDiesel = 0.0;
+    this.priceEspecial = 0.0;
+    this.priceRegular = 0.0;
+    this.coverImg = coverImg;
+    this.schedule = '';
+  }
 }

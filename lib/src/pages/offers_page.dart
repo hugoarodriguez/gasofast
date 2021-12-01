@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:gasofast/src/models/gasolinera_model.dart';
+import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
 
 class OffersPage extends StatelessWidget {
 
+  final gasolineraProvider = GasolineraProvider();
+
   @override
   Widget build(BuildContext context) {
+
+    final gasolineraModel = ModalRoute.of(context)!.settings.arguments as GasolineraModel;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -17,58 +24,86 @@ class OffersPage extends StatelessWidget {
         title: Text('Ofertas', style: TextStyle(color: colorAzulOscuro()),),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: _content(),
+      body: SingleChildScrollView(child: _content(gasolineraModel))
+    );
+  }
+
+  Widget _content(GasolineraModel gasolineraModel){
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            child: Center(child: Text(gasolineraModel.name, textAlign: TextAlign.center,style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold ),)),
+          ),
+          _offers(gasolineraModel.id)
+        ],
       ),
     );
   }
-}
 
-Widget _content(){
-  return Container(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-          child: Text('Texaco Caribe', textAlign: TextAlign.center,style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold ),),
-        ),
-        _offers()
-      ],
-    ),
-  );
-}
+  Widget _offers(String id){
+    return FutureBuilder(
+      future: gasolineraProvider.getOfertasGasolineras(id),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
 
-Widget _offers(){
-  return Column(
-    children: <Widget>[
-      _offer('https://firebasestorage.googleapis.com/v0/b/gasofastf.appspot.com/o/offers%2Ftexaco%2FPromocionJuega.png?alt=media&token=de17f92d-827e-4dbd-966c-4cd84fd3fc76'),
-      SizedBox(height: 20.0,),
-      _offer('https://firebasestorage.googleapis.com/v0/b/gasofastf.appspot.com/o/offers%2Ftexaco%2FPuntosTexaco.jpg?alt=media&token=90acc4f6-09fb-42da-981d-50667d24610b'),
-      SizedBox(height: 20.0,),
-    ],
-  );
-}
+        if(!snapshot.hasData){
+          return Column();
+        }
 
-Widget _offer(String imageUrl){
-  return Card(
-    margin: EdgeInsets.symmetric(horizontal: 40.0),
-    color: colorCeleste(),
-    elevation: 5.0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-    child: Container(
-      width: 300.0,
-      height: 300.0,
-      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      child: IconButton(
-        icon: Image(
-          image: NetworkImage(imageUrl),
-        ),
-        onPressed: (){
-          //Añadir función para expandir imagen en toda la pantalla
-          print('Oferta Seleccionada');
-        },
-      )
-    ),
-  );
+        if(snapshot.hasData){
+
+          List items = snapshot.data;
+
+          List<Widget> ofertas = [];
+
+          for (var item in items) {
+            ofertas.add(_offer(item.coverImg));
+            ofertas.add(SizedBox(height: 20.0,));
+          }          
+
+          return Column(
+            children: ofertas
+          );
+
+        } else if(snapshot.hasError){
+
+          return Column();
+
+        } else {
+
+          return Column();
+
+        }
+
+      }
+    );
+  }
+
+  Widget _offer(String imageUrl){
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 40.0),
+      color: colorCeleste(),
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      child: Container(
+        width: 300.0,
+        height: 300.0,
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+        child: IconButton(
+          icon: FadeInImage(
+            placeholder: AssetImage('assets/images/loading.gif'),
+            image: NetworkImage(imageUrl),
+            fadeInDuration: Duration(milliseconds: 1000)
+          ),
+          onPressed: (){
+            //Añadir función para expandir imagen en toda la pantalla
+            print('Oferta Seleccionada');
+          },
+        )
+      ),
+    );
+  }
 }
