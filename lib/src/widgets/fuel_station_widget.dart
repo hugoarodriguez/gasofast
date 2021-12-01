@@ -73,7 +73,7 @@ class _FuelStationState extends State<FuelStation> {
                     height: 80.0,
                     ),
                   ),
-                _contentRow(context, snapshot.data[0].name, snapshot.data[0].name),
+                _contentRow(context, snapshot.data[0].name, snapshot.data[0].schedule),
               ],
             ),
           );

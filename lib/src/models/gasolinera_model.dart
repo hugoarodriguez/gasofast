@@ -8,10 +8,11 @@ class GasolineraModel{
   double priceDiesel = 0.0;
   double priceEspecial = 0.0;
   double priceRegular = 0.0;
-  String coverImg = ''; 
+  String coverImg = '';
+  String schedule = '';
 
   GasolineraModel(String id, String locationLatitude, String locationLongitude, String name, double priceDiesel, 
-  double priceEspecial, double priceRegular, String coverImg){
+  double priceEspecial, double priceRegular, String coverImg, String schedule){
     this.id = id;
     this.locationLatitude = locationLatitude;
     this.locationLongitude = locationLongitude;
@@ -20,5 +21,6 @@ class GasolineraModel{
     this.priceEspecial = priceEspecial;
     this.priceRegular = priceRegular;
     this.coverImg = coverImg;
+    this.schedule = schedule;
   }
 }

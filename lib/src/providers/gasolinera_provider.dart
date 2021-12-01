@@ -94,7 +94,7 @@ class GasolineraProvider{
     
     for (var doc in documents) { 
       gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
-      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img']));
+      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
     }
 
     return gasolinerasList;
@@ -117,7 +117,7 @@ class GasolineraProvider{
     final cloud_firestore.DocumentSnapshot doc = await reference.doc(idGasolineraFinal).get();
     
     gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
-      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img']));
+      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
 
     return gasolinerasList;
   }

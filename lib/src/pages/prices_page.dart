@@ -35,7 +35,7 @@ class PricesPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 40.0,),
-          _schedule(gasolineraModel.name),
+          _schedule(gasolineraModel.schedule),
           SizedBox(height: 40.0,),
           Text('Combustibles', textAlign: TextAlign.center,style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold ),),
           SizedBox(height: 10.0,),
