@@ -178,7 +178,7 @@ class _FuelStationState extends State<FuelStation> {
               child: Text('Precios', style: TextStyle(color: colorAzulOscuro(), fontSize: 10.0 ),),
               onPressed: (){
                 //Redirigir a página "Precios"
-                Navigator.pushNamed(context, 'prices');
+                Navigator.pushNamed(context, 'prices', arguments: datosGasolinera[0]);
               },
               style: cardButtonStyleLight(),
             ),
@@ -188,7 +188,7 @@ class _FuelStationState extends State<FuelStation> {
               child: Text('Ver ofertas', style: TextStyle(color: colorAzulOscuro(), fontSize: 10.0 ),),
               onPressed: (){
                 //Redirigir a página "Ofertas"
-                Navigator.pushNamed(context, 'offers');
+                Navigator.pushNamed(context, 'offers', arguments: datosGasolinera[0]);
               },
               style: cardButtonStyleLight(),
             ),
