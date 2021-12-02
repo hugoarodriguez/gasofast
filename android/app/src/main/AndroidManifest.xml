@@ -1,10 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.gasofast">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
    <application
         android:label="gasofast"
         android:icon="@mipmap/ic_launcher">
+         <!-- Agregado -->
         <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyCAVdUer1AAO8tdtqjVtpcTb7M1pq6GMQk"/>
+        <!-- Agregado Fin -->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
