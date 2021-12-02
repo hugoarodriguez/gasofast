@@ -95,6 +95,7 @@ class _LocationsPageState extends State<LocationsPage> {
               ),
             ),
           );
+          
         });
 
       }).catchError((e) {
@@ -109,8 +110,6 @@ class _LocationsPageState extends State<LocationsPage> {
       setState(() {
         // Store the position in the variable
         _currentPosition = position;
-
-        print('CURRENT POS: $_currentPosition');
 
         // For moving the camera to current location
         mapController.animateCamera(
@@ -152,6 +151,7 @@ class _LocationsPageState extends State<LocationsPage> {
                       ? snapshotMarkers.data
                       : []),
                     zoomControlsEnabled: false,
+                    myLocationEnabled: true,
                     mapType: mapType,
                     initialCameraPosition: puntoInicial,
                     onMapCreated: (GoogleMapController controller) async {
@@ -164,7 +164,7 @@ class _LocationsPageState extends State<LocationsPage> {
                   ),
                   _frontContent(context),
                   _favoritesFAB(context),
-                  _locateFAB(context),
+                  _locateFAB(context, bloc),
                 ];
                 
                 bloc.createWidgetList(_listadoWidgets);
@@ -341,7 +341,7 @@ class _LocationsPageState extends State<LocationsPage> {
     );
   }
 
-  Widget _locateFAB(BuildContext context){
+  Widget _locateFAB(BuildContext context, MapBloc bloc){
     final size = MediaQuery.of(context).size;
 
     return Padding(
@@ -351,8 +351,10 @@ class _LocationsPageState extends State<LocationsPage> {
         backgroundColor: colorAzulOscuro(),
         child: Icon(Icons.my_location, size: 32.0,),
         onPressed: () async {
+
           //Obtenemos la ubicación actual
           await _getCurrentLocation();
+
         },
       ),
     );

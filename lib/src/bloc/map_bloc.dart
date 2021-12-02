@@ -8,7 +8,6 @@ import 'package:rxdart/rxdart.dart';
 class MapBloc{
 
   final _markersController = BehaviorSubject<Set<Marker>>();
-  final _visibilityController = BehaviorSubject<bool>();
   final _listaWidgetsController = BehaviorSubject<List<Widget>>();
 
 
@@ -20,8 +19,6 @@ class MapBloc{
   //Crear los marcadores
   void createMarkers(data, List<Widget> listaWidget) async {
     List items = data;
-
-    _visibilityController.add(false);
 
     for (var i = 0; i < items.length; i++) {
       _markers.add(Marker(
@@ -63,22 +60,13 @@ class MapBloc{
     _listaWidgetsController.sink.add(listaWidget);
   }
 
-  void addWidget(String idGasStation, List<Widget> listaWidget){
-
-  }
-
   //Obtener el último valor ingresado a los Streams
   Stream<Set<Marker>> get markersStream => _markersController.stream;
   Stream<List<Widget>> get listaWidgetStream => _listaWidgetsController.stream;
-  Stream<bool> get visibilityStream => _visibilityController.stream;
-
-  //Obtener valor actual
-  bool get getVisibility => visibility;
 
   //Limpiar los Streams
   dispose(){
     _markersController.close();
-    _visibilityController.close();
     _listaWidgetsController.close();
   }
   
