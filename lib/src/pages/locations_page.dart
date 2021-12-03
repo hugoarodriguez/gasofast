@@ -150,6 +150,7 @@ class _LocationsPageState extends State<LocationsPage> {
                       snapshotMarkers.data.length > 0 
                       ? snapshotMarkers.data
                       : []),
+                    mapToolbarEnabled: false,
                     zoomControlsEnabled: false,
                     myLocationEnabled: true,
                     mapType: mapType,
@@ -331,7 +332,7 @@ class _LocationsPageState extends State<LocationsPage> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.81,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.87,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'favoritesFAB',
         backgroundColor: colorAzulOscuro(),
@@ -345,7 +346,7 @@ class _LocationsPageState extends State<LocationsPage> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.73,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.78,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'locateFAB',
         backgroundColor: colorAzulOscuro(),

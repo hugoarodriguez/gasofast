@@ -26,7 +26,7 @@ class MapBloc{
         position: LatLng(double.parse(items[i].locationLatitude), double.parse(items[i].locationLongitude)),
         infoWindow: InfoWindow(
           title: items[i].name,
-          snippet: items[i].name,
+          snippet: items[i].schedule,
           onTap: (){
 
             listaWidget = _listaWidgetsController.value!;
