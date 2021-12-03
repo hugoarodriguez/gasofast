@@ -60,22 +60,48 @@ class _LocationsPageState extends State<LocationsPage> {
   //Método para obtener la ubicacion actual del usuario
   _getCurrentLocation() async {
 
-  //Solicitamos permisos al usuario
-  LocationPermission permission;
+    //Solicitamos permisos al usuario
+    LocationPermission permission;
 
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-
-    //Incocamos la el método para solicitar permisos
-    permission = await Geolocator.requestPermission();
-
+    permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      //Si los permisos se denegaron únicamente esta vez
-      print('Los permisos de ubicación fueron denegados');
-    }
-    else if (permission == LocationPermission.deniedForever) {
-      //Si los permisos fueron denegados permanentemente
-      print('Los permisos de ubicación fueron denegados permanentemente, no se puden solicitar permisos.');
+
+      //Incocamos la el método para solicitar permisos
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        //Si los permisos se denegaron únicamente esta vez
+        print('Los permisos de ubicación fueron denegados');
+      }
+      else if (permission == LocationPermission.deniedForever) {
+        //Si los permisos fueron denegados permanentemente
+        print('Los permisos de ubicación fueron denegados permanentemente, no se puden solicitar permisos.');
+      } else {
+        //Si ninguna de las opciones anteriores se ejecutó, indica que obtuvimos los permisos necesario
+        await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+            .then((Position position) async {
+
+          setState(() {
+            // Store the position in the variable
+            _currentPosition = position;
+
+            // For moving the camera to current location
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(position.latitude, position.longitude),
+                  zoom: 15,
+                  tilt: 50.0,
+                ),
+              ),
+            );
+            
+          });
+
+        }).catchError((e) {
+          print(e);
+        });
+      }
     } else {
       //Si ninguna de las opciones anteriores se ejecutó, indica que obtuvimos los permisos necesario
       await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
@@ -95,39 +121,13 @@ class _LocationsPageState extends State<LocationsPage> {
               ),
             ),
           );
-          
         });
 
       }).catchError((e) {
         print(e);
       });
     }
-  } else {
-    //Si ninguna de las opciones anteriores se ejecutó, indica que obtuvimos los permisos necesario
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) async {
-
-      setState(() {
-        // Store the position in the variable
-        _currentPosition = position;
-
-        // For moving the camera to current location
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-              zoom: 15,
-              tilt: 50.0,
-            ),
-          ),
-        );
-      });
-
-    }).catchError((e) {
-      print(e);
-    });
   }
-}
 
   Widget _fullContent(BuildContext context, MapBloc bloc){
     return FutureBuilder(

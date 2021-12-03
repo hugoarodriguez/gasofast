@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:gasofast/src/models/gasolinera_model.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher; 
 
 import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
@@ -26,10 +29,13 @@ class _FuelStationState extends State<FuelStation> {
 
   List<GasolineraModel> datosGasolinera = [];
 
+  late Position _currentPosition;
+
   @override
   void initState() {
     super.initState();
     isFavorita();
+    _getCurrentLocation();
   }
 
   
@@ -45,6 +51,24 @@ class _FuelStationState extends State<FuelStation> {
   void isFavorita() async{
     //Evaluamos si la gasolinera está marcada como favorita para este usuario
     _favoriteIsChecked = await gasolineraProvider.isFavorita(user!.uid, widget.gasStationId);
+  }
+
+  //Método para obtener ubicación actual del usuario
+  void _getCurrentLocation() async {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+      .then((Position position) async {
+        _currentPosition = position;
+      });
+  }
+
+  //Método para abrir Google Maps con la dirección de la gasolinera
+  void _launchMapsUrl(LatLng currentLocation, LatLng destinationLocation ) async {
+    final url = 'https://www.google.com/maps/dir/${destinationLocation.latitude},+${destinationLocation.longitude}/${currentLocation.latitude},${currentLocation.longitude}/@${currentLocation.latitude},${currentLocation.longitude}';
+    if (await url_launcher.canLaunch(url)) {
+      await url_launcher.launch(url);
+    } else {
+      print('No se pudo ir a la ruta');
+    }
   }
 
   Widget _gasCardView(BuildContext context){
@@ -167,8 +191,14 @@ class _FuelStationState extends State<FuelStation> {
           _buttonSize(
             ElevatedButton(
               child: Text('Indicaciones', style: TextStyle(color: Colors.white, fontSize: 10.0 ),),
-              onPressed: (){
-                //Mostrar indicaciones para ir a esa gasolinera
+              onPressed: () async {
+                
+                _getCurrentLocation();//Obtenemos la ubicación actual
+
+                //Invocamos la búsqueda en Google Maps
+                _launchMapsUrl(LatLng(_currentPosition.latitude, _currentPosition.longitude), 
+                LatLng(double.parse(datosGasolinera[0].locationLatitude),double.parse(datosGasolinera[0].locationLongitude)) );
+
               },
               style: cardButtonStyleDark(),
             ),
