@@ -331,7 +331,7 @@ class _LocationsPageState extends State<LocationsPage> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.85,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.81,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'favoritesFAB',
         backgroundColor: colorAzulOscuro(),
@@ -345,7 +345,7 @@ class _LocationsPageState extends State<LocationsPage> {
     final size = MediaQuery.of(context).size;
 
     return Padding(
-      padding: EdgeInsets.only(top: size.height * 0.75,left: size.width * 0.80),
+      padding: EdgeInsets.only(top: size.height * 0.73,left: size.width * 0.80),
       child: FloatingActionButton(
         heroTag: 'locateFAB',
         backgroundColor: colorAzulOscuro(),
