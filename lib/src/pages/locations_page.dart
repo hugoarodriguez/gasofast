@@ -20,6 +20,9 @@ class LocationsPage extends StatefulWidget {
 }
 
 class _LocationsPageState extends State<LocationsPage> {
+
+  //Manejar el foco del Input de Búsqueda
+  FocusNode keyboarFocusNode = new FocusNode();
   
   final usuarioProvider = UsuarioProvider();
   final gasolineraProvider = GasolineraProvider();
@@ -55,6 +58,12 @@ class _LocationsPageState extends State<LocationsPage> {
         child: _fullContent(context, mapBloc)
       ),
     );
+  }
+
+  //Método para quitar foco del input
+  _removeFocus(){
+
+    keyboarFocusNode.unfocus();
   }
 
   //Método para obtener la ubicacion actual del usuario
@@ -136,13 +145,15 @@ class _LocationsPageState extends State<LocationsPage> {
 
         if(snapshot.hasData){
 
-          bloc.createMarkers(snapshot.data, _listadoWidgets);
+          bloc.createMarkers(snapshot.data, _listadoWidgets, keyboarFocusNode);
 
           return StreamBuilder(
             stream: bloc.markersStream,
             builder: (BuildContext context, AsyncSnapshot snapshotMarkers){
 
               if(snapshotMarkers.hasData){
+
+                markers = snapshotMarkers.data;
 
                 _listadoWidgets = [
                   GoogleMap(
@@ -162,6 +173,7 @@ class _LocationsPageState extends State<LocationsPage> {
                       await _getCurrentLocation();
                       
                     },
+                    onTap: (value) => _removeFocus(),
                   ),
                   _frontContent(context),
                   _favoritesFAB(context),
@@ -233,12 +245,19 @@ class _LocationsPageState extends State<LocationsPage> {
           children: <Widget>[
             Expanded(
               child: TextField(
+                focusNode: keyboarFocusNode,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Buscar gasolinera',
                 ),
                 onTap: (){
+
                   setState(() {
+
+                    for (var item in markers) {
+                      mapController.hideMarkerInfoWindow(item.markerId);
+                    }
+
                     if(_listadoWidgets.length > 4){
                       _listadoWidgets.removeLast();
                     }
@@ -337,7 +356,12 @@ class _LocationsPageState extends State<LocationsPage> {
         heroTag: 'favoritesFAB',
         backgroundColor: colorAzulOscuro(),
         child: Icon(Icons.star, size: 32.0,),
-        onPressed: () => Navigator.pushNamed(context, 'favorites'),
+        onPressed: ()  {
+
+          _removeFocus();
+          Navigator.pushNamed(context, 'favorites'); 
+          
+        },
       ),
     );
   }
@@ -352,6 +376,8 @@ class _LocationsPageState extends State<LocationsPage> {
         backgroundColor: colorAzulOscuro(),
         child: Icon(Icons.my_location, size: 32.0,),
         onPressed: () async {
+
+          _removeFocus();
 
           //Obtenemos la ubicación actual
           await _getCurrentLocation();

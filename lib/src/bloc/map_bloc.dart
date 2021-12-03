@@ -17,21 +17,23 @@ class MapBloc{
   Set<Marker> _markers = Set<Marker>();
 
   //Crear los marcadores
-  void createMarkers(data, List<Widget> listaWidget) async {
+  void createMarkers(data, List<Widget> listaWidget, FocusNode keyboardFocusNode ) async {
     List items = data;
 
     for (var i = 0; i < items.length; i++) {
       _markers.add(Marker(
         markerId: MarkerId(items[i].id),
         position: LatLng(double.parse(items[i].locationLatitude), double.parse(items[i].locationLongitude)),
+        onTap: () => keyboardFocusNode.unfocus(),
         infoWindow: InfoWindow(
           title: items[i].name,
           snippet: items[i].schedule,
-          onTap: (){
+          onTap: () async {
 
             listaWidget = _listaWidgetsController.value!;
 
             if(listaWidget.length <= 4){
+
               listaWidget.add(
                 Padding(
                   padding: EdgeInsets.only(bottom: 500.0, top: 70.0),
