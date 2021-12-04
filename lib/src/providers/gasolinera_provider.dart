@@ -23,6 +23,7 @@ class GasolineraProvider{
         'price_especial'      : gasolineraModel.priceEspecial,
         'price_regular'       : gasolineraModel.priceRegular,
         'cover_img'           : gasolineraModel.coverImg,
+        'schedule'           : gasolineraModel.schedule,
       });
       //Si la subida salió bien se retorna 'true'
       return true;
@@ -100,6 +101,27 @@ class GasolineraProvider{
     return gasolinerasList;
   }
 
+  //Obtiene las gasolineras marcadas como favoritas por un usuario
+  Future<List<GasolineraModel>> getGasolinerasFavoritas(String uid) async {
+    List<GasolineraModel> gasolinerasList = [];
+
+    try {
+      cloud_firestore.CollectionReference reference  = _firestore.collection('favorite_gas_stations');
+
+      final cloud_firestore.QuerySnapshot result = await reference.where('id_user', isEqualTo: uid).get();
+      final List<cloud_firestore.DocumentSnapshot> documents = result.docs;
+      
+      for (var doc in documents) { 
+        gasolinerasList.add(GasolineraModel(doc['id_gas_station'], doc['location_latitude'], doc['location_longitude'], 
+        doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return gasolinerasList;
+  }
+
   //Método para obtener los datos de las OFERTAS de las gasolineras
   Future<List<GasolineraModel>> getOfertasGasolineras(String idGasolinera) async {
 
@@ -136,14 +158,19 @@ class GasolineraProvider{
     }
 
     List<GasolineraModel> gasolinerasList = [];
-    
-    cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations');
 
-    final cloud_firestore.DocumentSnapshot doc = await reference.doc(idGasolineraFinal).get();
-    
-    gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
-      doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
+    try {
+      cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations');
 
+      final cloud_firestore.DocumentSnapshot doc = await reference.doc(idGasolineraFinal).get();
+      
+      gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
+        doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
+
+    } catch (e) {
+      print(e.toString());
+    }
+    
     return gasolinerasList;
   }
 }

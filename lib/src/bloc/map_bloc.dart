@@ -17,7 +17,7 @@ class MapBloc{
   Set<Marker> _markers = Set<Marker>();
 
   //Crear los marcadores
-  void createMarkers(data, List<Widget> listaWidget, FocusNode keyboardFocusNode ) async {
+  void createMarkers(data, List<Widget> listaWidget, FocusNode keyboardFocusNode, Function callback) async {
     List items = data;
 
     for (var i = 0; i < items.length; i++) {
@@ -39,7 +39,7 @@ class MapBloc{
                   padding: EdgeInsets.only(bottom: 500.0, top: 70.0),
                   child: Visibility(
                     visible: true,
-                    child: FuelStation(gasStationId: items[i].id),
+                    child: FuelStation(gasStationId: items[i].id, callback: callback, widgetCaller: 0,),
                   ),
                 )
               );

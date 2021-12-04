@@ -60,6 +60,18 @@ class _LocationsPageState extends State<LocationsPage> {
     );
   }
 
+  //Función callback vacía para FavoritosPage
+  void callback(){}
+
+  //Función para eliminar último Widget agregado
+  void _removeFuelStationWidget(){
+    setState(() {
+      if(_listadoWidgets.length > 4){
+        _listadoWidgets.removeLast();
+      }
+    });
+  }
+
   //Método para quitar foco del input
   _removeFocus(){
 
@@ -145,7 +157,7 @@ class _LocationsPageState extends State<LocationsPage> {
 
         if(snapshot.hasData){
 
-          bloc.createMarkers(snapshot.data, _listadoWidgets, keyboarFocusNode);
+          bloc.createMarkers(snapshot.data, _listadoWidgets, keyboarFocusNode, callback);
 
           return StreamBuilder(
             stream: bloc.markersStream,
@@ -357,6 +369,8 @@ class _LocationsPageState extends State<LocationsPage> {
         backgroundColor: colorAzulOscuro(),
         child: Icon(Icons.star, size: 32.0,),
         onPressed: ()  {
+
+          _removeFuelStationWidget();
 
           _removeFocus();
           Navigator.pushNamed(context, 'favorites'); 

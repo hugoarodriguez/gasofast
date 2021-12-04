@@ -13,8 +13,10 @@ import 'package:gasofast/src/utils/styles_utils.dart';
 class FuelStation extends StatefulWidget {
 
   String gasStationId;
+  Function callback;
+  int widgetCaller;
 
-  FuelStation({required this.gasStationId});
+  FuelStation({required this.gasStationId, required this.callback, required this.widgetCaller });
 
   @override
   State<FuelStation> createState() => _FuelStationState();
@@ -79,7 +81,9 @@ class _FuelStationState extends State<FuelStation> {
         if(snapshot.hasData) {
 
           //Obtenemos los datos de la gasolinera que se va a guardar o eliminar de favoritos
-          datosGasolinera.add(snapshot.data[0]);
+          if(datosGasolinera.length < 1){
+            datosGasolinera.add(snapshot.data[0]);
+          }
 
           return Card(
             margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0 ),
@@ -144,29 +148,48 @@ class _FuelStationState extends State<FuelStation> {
                   String uid = user!.uid;
                   bool r = false;
 
-                  if (_favoriteIsChecked){
-
-                    //Quitar de favoritos
-                    r = await gasolineraProvider.elmGasolineraFavorita(uid, datosGasolinera[0]);
-
-                  } else {
-
-                    //Agregar a favoritos
-                    r = await gasolineraProvider.aggGasolineraFavorita(uid, datosGasolinera[0]);
-                  }
-                  
-                  setState((){
-                    if (_favoriteIsChecked && r){
+                  if(widget.widgetCaller == 0){
+                    if (_favoriteIsChecked){
 
                       //Quitar de favoritos
-                      _favoriteIsChecked = false;
+                      r = await gasolineraProvider.elmGasolineraFavorita(uid, datosGasolinera[0]);
 
-                    } else if (!_favoriteIsChecked && r){
+                    } else {
 
                       //Agregar a favoritos
-                      _favoriteIsChecked = true;
+                      r = await gasolineraProvider.aggGasolineraFavorita(uid, datosGasolinera[0]);
                     }
-                  });
+                    
+                    setState((){
+                      if (_favoriteIsChecked && r){
+
+                        //Quitar de favoritos
+                        _favoriteIsChecked = false;
+
+                      } else if (!_favoriteIsChecked && r){
+
+                        //Agregar a favoritos
+                        _favoriteIsChecked = true;
+                      }
+                    });
+                  } else if(widget.widgetCaller == 1){
+
+                    if (_favoriteIsChecked){
+
+                      print('Valor 2 de _favoriteIsChecked: $_favoriteIsChecked ');
+
+                      GasolineraModel gasolineraModel = GasolineraModel(widget.gasStationId, '', '', '', 0.0, 0.0, 0.0, '', '');
+
+                      //Quitar de favoritos
+                      r = await gasolineraProvider.elmGasolineraFavorita(uid, gasolineraModel);
+                    }
+
+                    try {
+                      widget.callback();
+                    } catch (e) {
+                      print('Error: ${e.toString()}');
+                    }
+                  }
 
                 },
               )
