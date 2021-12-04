@@ -86,6 +86,39 @@ class UsuarioProvider{
     return { 'ok': false, 'mensaje': '¡No se pudo crear la cuenta intente mas tarde!' };
   }
 
+  Future<Map<String, dynamic>> actualizarPassword(String? password, String? passwordn, String? passwordc) async {
+
+    try {
+
+      firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+      if(password != null && passwordn != null && passwordc != null){
+
+        final info = await login(user!.email, password);
+
+        if(info['ok']){
+          if(passwordn == passwordc){
+            await user.updatePassword(passwordn);
+            
+            return { 'ok': true, 'mensaje': '¡Contraseña actualizada satisfactoriamente!' };
+
+          } else {
+            return { 'ok': false, 'mensaje': '¡Las contraseñas deben coincidir!' };
+          }
+        } else {
+          return { 'ok': false, 'mensaje': '¡La contraseña actual no coincide con la registrada!' };
+        }
+
+      } else {
+        return { 'ok': false, 'mensaje': '¡Ingrese la contraseña anterior, la contraseña nueva y confirme!' };
+      }
+
+      } on firebase_auth.FirebaseAuthException catch (e) {
+        print('Error: ${e.toString()}');
+        return { 'ok': false, 'mensaje': '¡No se pudo actualizar la contraseña intente mas tarde!' };
+    }
+  }
+
   //Cerrar sesión
   Future signOut() async {
     await auth.signOut();

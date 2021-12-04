@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gasofast/src/bloc/change_password_bloc.dart';
 
 import 'package:gasofast/src/bloc/login_bloc.dart';
 import 'package:gasofast/src/bloc/map_bloc.dart';
@@ -9,6 +10,7 @@ class Provider extends InheritedWidget{
 
   final loginBloc = LoginBloc();
   final registerBloc = RegisterBloc();
+  final changePasswordBloc = ChangePasswordBloc();
   final mapBloc = MapBloc();
 
   static late Provider _instancia;
@@ -50,6 +52,17 @@ class Provider extends InheritedWidget{
     context.dependOnInheritedWidgetOfExactType<Provider>()!.registerBloc
     :
     registerBlocN;
+  }
+
+  //Esta función busca entre todo el árbol de Widgets y retorna la instancia del bloc 'registerBloc' basado en el 'context'
+  static ChangePasswordBloc ofChangePassword ( BuildContext context ){
+    final changePasswordBlocN = ChangePasswordBloc();
+
+    return context.dependOnInheritedWidgetOfExactType<Provider>() != null 
+    ? 
+    context.dependOnInheritedWidgetOfExactType<Provider>()!.changePasswordBloc
+    :
+    changePasswordBlocN;
   }
 
   //Esta función busca entre todo el árbol de Widgets y retorna la instancia del bloc 'mapBloc' basado en el 'context'

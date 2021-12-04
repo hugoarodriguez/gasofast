@@ -190,31 +190,31 @@ class SignUpPage extends StatelessWidget {
   }
 
   //Método para autenticar inicio de sesión con Firebase
-    _register(RegisterBloc bloc, BuildContext context) async {
+  _register(RegisterBloc bloc, BuildContext context) async {
 
-      final info =  await usuarioProvider.nuevoUsuario(bloc.email, bloc.password, bloc.passwordC);
+    final info =  await usuarioProvider.nuevoUsuario(bloc.email, bloc.password, bloc.passwordC);
 
-      if(info['ok']){
-        //Escondemos el teclado
-        FocusScopeNode currentFocus = FocusScope.of(context);
+    if(info['ok']){
+      //Escondemos el teclado
+      FocusScopeNode currentFocus = FocusScope.of(context);
 
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.green.shade400,)
-        );
-
-        //Redireccionamos a la pantalla Login para que inicie sesión luego de autenticar su email
-        Navigator.pushNamed(context, 'login');
-      } else {
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
-        );
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.green.shade400,)
+      );
+
+      //Redireccionamos a la pantalla Login para que inicie sesión luego de autenticar su email
+      Navigator.pushNamed(context, 'login');
+    } else {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
+      );
     }
+  }
 
   Widget _crearRegistroOpciones(){
     final textHeader =  Container(
