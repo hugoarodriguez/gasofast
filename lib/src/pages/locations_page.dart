@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:gasofast/src/bloc/map_bloc.dart';
-import 'package:gasofast/src/bloc/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:gasofast/src/bloc/map_bloc.dart';
+import 'package:gasofast/src/bloc/provider.dart';
+import 'package:gasofast/src/widgets/search_delegate.dart';
 import 'package:gasofast/src/providers/gasolinera_provider.dart';
 import 'package:gasofast/src/providers/usuario_provider.dart';
 import 'package:gasofast/src/utils/colors_utils.dart';
@@ -174,6 +175,7 @@ class _LocationsPageState extends State<LocationsPage> {
                       snapshotMarkers.data.length > 0 
                       ? snapshotMarkers.data
                       : []),
+                    compassEnabled: false,
                     mapToolbarEnabled: false,
                     zoomControlsEnabled: false,
                     myLocationEnabled: true,
@@ -188,9 +190,10 @@ class _LocationsPageState extends State<LocationsPage> {
                     },
                     onTap: (value) => _removeFocus(),
                   ),
-                  _frontContent(context),
                   _favoritesFAB(context),
                   _locateFAB(context, bloc),
+                  _frontContent(context),
+                  
                 ];
                 
                 bloc.createWidgetList(_listadoWidgets);
@@ -258,6 +261,7 @@ class _LocationsPageState extends State<LocationsPage> {
           children: <Widget>[
             Expanded(
               child: TextField(
+                readOnly: true,
                 focusNode: keyboarFocusNode,
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -274,6 +278,8 @@ class _LocationsPageState extends State<LocationsPage> {
                     if(_listadoWidgets.length > 4){
                       _listadoWidgets.removeLast();
                     }
+                    
+                    showSearch(context: context, delegate: DataSearch(googleMapController: mapController));
                   });
                 },
               ),

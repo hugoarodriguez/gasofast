@@ -122,6 +122,34 @@ class GasolineraProvider{
     return gasolinerasList;
   }
 
+  //Obtiene las gasolineras marcadas como favoritas por un usuario
+  Future<List<GasolineraModel>> searchGasolineras(String name) async {
+    List<GasolineraModel> gasolinerasList = [];
+
+    try {
+      cloud_firestore.CollectionReference reference  = _firestore.collection('gas_stations');
+
+      final cloud_firestore.QuerySnapshot result = await reference.get();
+      final List<cloud_firestore.DocumentSnapshot> documents = result.docs;
+      
+      for (var doc in documents) { 
+        gasolinerasList.add(GasolineraModel(doc.reference.id, doc['location_latitude'], doc['location_longitude'], 
+        doc['name'], doc['price_diesel'], doc['price_especial'], doc['price_regular'], doc['cover_img'], doc['schedule']));
+      }
+
+      //Filtramos los resultados
+      gasolinerasList = name.isEmpty
+      ? []
+      : gasolinerasList.where((p) => p.name.toLowerCase().contains(name.toLowerCase())).toList();
+
+
+    } catch (e) {
+      print(e.toString());
+    }
+
+    return gasolinerasList;
+  }
+
   //Método para obtener los datos de las OFERTAS de las gasolineras
   Future<List<GasolineraModel>> getOfertasGasolineras(String idGasolinera) async {
 
