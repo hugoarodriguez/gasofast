@@ -27,6 +27,7 @@ class _LocationsPageState extends State<LocationsPage> {
   final usuarioProvider = UsuarioProvider();
   final gasolineraProvider = GasolineraProvider();
   List<Widget> _listadoWidgets = [];
+  // ignore: unused_field
   late Position _currentPosition;
 
   Completer<GoogleMapController> _controller = Completer();
