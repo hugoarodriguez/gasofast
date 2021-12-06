@@ -53,28 +53,43 @@ class UsuarioProvider{
 
     try {
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-      
-      final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
 
-      await auth.signInWithCredential(credential);
+      if(googleSignInAccount != null){
 
-      firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        
+        final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
 
-      if (user!= null && !user.emailVerified) {
-        await user.sendEmailVerification();//Solicitamos la verificación del email
-        return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        await auth.signInWithCredential(credential);
+
+        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+        if (user!= null && !user.emailVerified) {
+          await user.sendEmailVerification();//Solicitamos la verificación del email
+          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        } else {
+          return { 'ok': true };
+        }
+
       } else {
-        return { 'ok': true };
+          return { 'ok': false, 'mensaje': '¡Cancelaste el inicio de sesión!' };
       }
 
       } on firebase_auth.FirebaseAuthException catch (e) {
-        print('Error: ' + e.code);
-        return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+
+        if (e.code == 'sign_in_canceled') {
+          return { 'ok': false, 'mensaje': '¡Cancelaste el inicio de sesión!' };
+        } else if (e.code == 'wrong-password') {
+          return { 'ok': false, 'mensaje': '¡Contraseña incorrecta!' };
+        } else {
+          print('Error: ' + e.code);
+        }
     }
+    
+    return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
   }
   
 
@@ -152,6 +167,7 @@ class UsuarioProvider{
 
   //Cerrar sesión
   Future signOut() async {
+    await _googleSignIn.signOut();
     await auth.signOut();
   }
 }
