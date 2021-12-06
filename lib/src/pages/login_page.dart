@@ -210,7 +210,7 @@ class LoginPage extends StatelessWidget {
                   height: 32.0,
                   fit: BoxFit.cover,
                 ),
-                onPressed: (){},
+                onPressed: () => _loginWithFacebook(context),
               ),
             ),
           );
@@ -265,6 +265,33 @@ class LoginPage extends StatelessWidget {
   _loginWithGoogle(BuildContext context) async {
 
     final info =  await usuarioProvider.loginWithGoogle();
+
+    if(info['ok']){
+      //Escondemos el teclado
+      FocusScopeNode currentFocus = FocusScope.of(context);
+
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+
+      //Redireccionamos a la pantalla Locations
+      Navigator.pushNamed(context, 'locations');
+    } else {
+
+      //Limpiamos los campos del formulario
+      _emailController.text = '';
+      _passwordController.text = '';
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
+      );
+    }
+  }
+
+  //Método para autenticar inicio de sesión con Firebase
+  _loginWithFacebook(BuildContext context) async {
+
+    final info =  await usuarioProvider.loginWithFacebook();
 
     if(info['ok']){
       //Escondemos el teclado
