@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart' as google_sign_in;
 //import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 //import 'package:gasofast/src/preferencias_usuario/preferencias_usuario.dart';
 
 class UsuarioProvider{
+
+  firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
+  google_sign_in.GoogleSignIn _googleSignIn = google_sign_in.GoogleSignIn();
+  FacebookAuth _facebookAuth = FacebookAuth.instance;
   
-  firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  get currentUser => auth.currentUser;
+  
+  get currentUser => _auth.currentUser;
 
   //final _prefs = new PreferenciasUsuario();
 
@@ -52,18 +56,18 @@ class UsuarioProvider{
   Future<Map<String, dynamic>> loginWithGoogle() async {
 
     try {
-      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      final google_sign_in.GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
 
       if(googleSignInAccount != null){
 
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+        final google_sign_in.GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
         
         final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
           accessToken: googleSignInAuthentication.accessToken,
           idToken: googleSignInAuthentication.idToken,
         );
 
-        await auth.signInWithCredential(credential);
+        await _auth.signInWithCredential(credential);
 
         firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
 
@@ -80,10 +84,13 @@ class UsuarioProvider{
 
       } on firebase_auth.FirebaseAuthException catch (e) {
 
+        await signOut();
+
         if (e.code == 'sign_in_canceled') {
           return { 'ok': false, 'mensaje': '¡Cancelaste el inicio de sesión!' };
-        } else if (e.code == 'wrong-password') {
-          return { 'ok': false, 'mensaje': '¡Contraseña incorrecta!' };
+        } else if (e.code == 'account-exists-with-different-credential') {
+
+        return { 'ok': false, 'mensaje': '¡Este correo ya está asociado a una cuenta creada con Google!' };
         } else {
           print('Error: ' + e.code);
         }
@@ -92,6 +99,64 @@ class UsuarioProvider{
     return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
   }
   
+  Future<Map<String, dynamic>> loginWithFacebook() async {
+
+    try {
+
+      final LoginResult loginResult = await _facebookAuth.login();
+
+      if(loginResult.status == LoginStatus.success ){
+        
+        final firebase_auth.AuthCredential credential = 
+          firebase_auth.FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+        await _auth.signInWithCredential(credential);
+
+        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+        if (user!= null && !user.emailVerified) {
+          await user.sendEmailVerification();//Solicitamos la verificación del email
+          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        } else {
+          return { 'ok': true };
+        }
+
+      } else if(loginResult.status == LoginStatus.cancelled ) {
+
+        return { 'ok': false, 'mensaje': '¡Cancelaste el inicio de sesión!' };
+
+      } else if(loginResult.status == LoginStatus.failed ) {
+
+        print('Error: ${loginResult.message}');
+
+        return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+
+      }  else if(loginResult.status == LoginStatus.operationInProgress ) {
+
+        return { 'ok': false, 'mensaje': '¡Iniciando sesión...!' };
+
+      } else {
+
+        return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+
+      }
+
+    } on firebase_auth.FirebaseAuthException catch (e) {
+
+      await signOut();
+
+      if (e.code == 'sign_in_canceled') {
+        return { 'ok': false, 'mensaje': '¡Cancelaste el inicio de sesión!' };
+      } else if (e.code == 'account-exists-with-different-credential') {
+        
+        return { 'ok': false, 'mensaje': '¡Este correo ya está asociado a una cuenta creada con Google!' };
+      } else {
+        print('Error: ' + e.code);
+      }
+    }
+    
+    return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+  }
 
   Future<Map<String, dynamic>> nuevoUsuario(String? email, String? password, String? passwordc) async {
 
@@ -168,6 +233,7 @@ class UsuarioProvider{
   //Cerrar sesión
   Future signOut() async {
     await _googleSignIn.signOut();
-    await auth.signOut();
+    await _facebookAuth.logOut();
+    await _auth.signOut();
   }
 }
