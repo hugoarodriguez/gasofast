@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 //import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 //import 'package:gasofast/src/preferencias_usuario/preferencias_usuario.dart';
@@ -6,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 class UsuarioProvider{
   
   firebase_auth.FirebaseAuth auth = firebase_auth.FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   get currentUser => auth.currentUser;
 
   //final _prefs = new PreferenciasUsuario();
@@ -46,6 +48,35 @@ class UsuarioProvider{
 
     return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
   }
+
+  Future<Map<String, dynamic>> loginWithGoogle() async {
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+      
+      final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      await auth.signInWithCredential(credential);
+
+      firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+      if (user!= null && !user.emailVerified) {
+        await user.sendEmailVerification();//Solicitamos la verificación del email
+        return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+      } else {
+        return { 'ok': true };
+      }
+
+      } on firebase_auth.FirebaseAuthException catch (e) {
+        print('Error: ' + e.code);
+        return { 'ok': false, 'mensaje': '¡No se pudo iniciar sesión intente mas tarde!' };
+    }
+  }
+  
 
   Future<Map<String, dynamic>> nuevoUsuario(String? email, String? password, String? passwordc) async {
 

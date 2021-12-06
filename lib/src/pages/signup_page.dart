@@ -12,13 +12,18 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(63, 114, 175, 1.0),
       floatingActionButton: _backButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      body: Stack(
-        children: <Widget>[
-          crearFondo(context),
-          _signUpForm(context)
-        ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              crearFondo(context),
+              _signUpForm(context)
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -45,7 +50,7 @@ class SignUpPage extends StatelessWidget {
         children: <Widget>[
           SafeArea(
             child: Container(
-              height: 120.0,
+              height: 180.0,
             ),
           ),
           Container(
@@ -79,8 +84,6 @@ class SignUpPage extends StatelessWidget {
               ],
             ),
           ),
-
-          _crearRegistroOpciones(),
 
         ],
       ),
@@ -214,61 +217,5 @@ class SignUpPage extends StatelessWidget {
         SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
       );
     }
-  }
-
-  Widget _crearRegistroOpciones(){
-    final textHeader =  Container(
-      child: Text('Prefiero registrarme con:', style: TextStyle(color: Colors.white), )
-    );
-
-    final googleButton = ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Container(
-              color: Color.fromRGBO(17, 45, 78, 1.0),
-              child: IconButton(
-                icon: Image(
-                  image: AssetImage('assets/images/google_logo.png'),
-                  width: 32.0,
-                  height: 32.0,
-                  fit: BoxFit.cover,
-                ),
-                onPressed: (){},
-              ),
-            ),
-          );
-    
-    final facebookButton = ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Container(
-              color: Color.fromRGBO(17, 45, 78, 1.0),
-              child: IconButton(
-                icon: Image(
-                  image: AssetImage('assets/images/facebook_logo.png'),
-                  width: 32.0,
-                  height: 32.0,
-                  fit: BoxFit.cover,
-                ),
-                onPressed: (){},
-              ),
-            ),
-          );
-
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15.0),
-      child: Column(
-        children: [
-          textHeader,
-          SizedBox(height: 10.0,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              googleButton,
-              SizedBox(width: 20.0,),
-              facebookButton
-            ],
-          ),
-        ],
-      ),
-    );
   }
 }

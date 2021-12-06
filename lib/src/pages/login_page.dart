@@ -80,6 +80,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
 
+          _crearRegistroOpciones(context),
+
           TextButton(
             child: Text('¿No tienes una cuenta?', style: TextStyle(color: Colors.white ),),
             onPressed: () => Navigator.pushReplacementNamed(context, 'signup')
@@ -176,10 +178,93 @@ class LoginPage extends StatelessWidget {
     );
   }
 
+  Widget _crearRegistroOpciones(BuildContext context ){
+    final textHeader =  Container(
+      child: Text('Prefiero continuar con:', style: TextStyle(color: Colors.white), )
+    );
+
+    final googleButton = ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+              color: Color.fromRGBO(17, 45, 78, 1.0),
+              child: IconButton(
+                icon: Image(
+                  image: AssetImage('assets/images/google_logo.png'),
+                  width: 32.0,
+                  height: 32.0,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: () => _loginWithGoogle(context),
+              ),
+            ),
+          );
+    
+    final facebookButton = ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+              color: Color.fromRGBO(17, 45, 78, 1.0),
+              child: IconButton(
+                icon: Image(
+                  image: AssetImage('assets/images/facebook_logo.png'),
+                  width: 32.0,
+                  height: 32.0,
+                  fit: BoxFit.cover,
+                ),
+                onPressed: (){},
+              ),
+            ),
+          );
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 15.0),
+      child: Column(
+        children: [
+          textHeader,
+          SizedBox(height: 10.0,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              googleButton,
+              SizedBox(width: 20.0,),
+              facebookButton
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   //Método para autenticar inicio de sesión con Firebase
   _login(LoginBloc bloc, BuildContext context) async {
 
     final info =  await usuarioProvider.login(bloc.email, bloc.password);
+
+    if(info['ok']){
+      //Escondemos el teclado
+      FocusScopeNode currentFocus = FocusScope.of(context);
+
+      if (!currentFocus.hasPrimaryFocus) {
+        currentFocus.unfocus();
+      }
+
+      //Redireccionamos a la pantalla Locations
+      Navigator.pushNamed(context, 'locations');
+    } else {
+
+      //Limpiamos los campos del formulario
+      _emailController.text = '';
+      _passwordController.text = '';
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(info['mensaje']), backgroundColor: Colors.red.shade400,)
+      );
+    }
+  }
+
+  //Método para autenticar inicio de sesión con Firebase
+  _loginWithGoogle(BuildContext context) async {
+
+    final info =  await usuarioProvider.loginWithGoogle();
 
     if(info['ok']){
       //Escondemos el teclado
