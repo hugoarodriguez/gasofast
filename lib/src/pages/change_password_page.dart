@@ -12,13 +12,18 @@ class ChangePasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(63, 114, 175, 1.0),
       floatingActionButton: _backButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-      body: Stack(
-        children: <Widget>[
-          crearFondo(context),
-          _changePasswordForm(context)
-        ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              crearFondo(context),
+              _changePasswordForm(context)
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -45,7 +50,7 @@ class ChangePasswordPage extends StatelessWidget {
         children: <Widget>[
           SafeArea(
             child: Container(
-              height: 120.0,
+              height: 180.0,
             ),
           ),
 

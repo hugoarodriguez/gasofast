@@ -230,6 +230,36 @@ class UsuarioProvider{
     }
   }
 
+  Future<Map<String, dynamic>> reestablecerPassword(String? email) async {
+
+    try {
+
+      String emailData = email == null ? 'correoinvalido123@algo.com' : email;
+
+      await _auth.sendPasswordResetEmail(email: emailData);
+
+      return { 'ok': true, 'mensaje': '¡Revisa la bandeja de entrada del correo electrónico proporcionado!' };
+
+
+    } on firebase_auth.FirebaseAuthException catch (e) {
+
+      if(e.code == 'invalid-email'){
+
+        return { 'ok': false, 'mensaje': '¡Formato de correo incorrecto!' };
+
+      } else if(e.code == 'user-not-found'){
+
+        return { 'ok': false, 'mensaje': '¡No existe un usuario registrado con ese email!' };
+
+      } else {
+
+        print('Error: ${e.toString()}');
+        return { 'ok': false, 'mensaje': '¡No se pudo enviar la solicitud! Intenta más tarde.' };
+
+      }
+    }
+  }
+
   //Cerrar sesión
   Future signOut() async {
     await _googleSignIn.signOut();
