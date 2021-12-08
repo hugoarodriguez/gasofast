@@ -1,9 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart' as google_sign_in;
-//import 'package:firebase_core/firebase_core.dart' as firebase_core;
-
-//import 'package:gasofast/src/preferencias_usuario/preferencias_usuario.dart';
 
 class UsuarioProvider{
 
@@ -11,29 +8,50 @@ class UsuarioProvider{
   google_sign_in.GoogleSignIn _googleSignIn = google_sign_in.GoogleSignIn();
   FacebookAuth _facebookAuth = FacebookAuth.instance;
   
-  
   get currentUser => _auth.currentUser;
-
-  //final _prefs = new PreferenciasUsuario();
 
   Future<Map<String, dynamic>> login(String? email, String? password) async {
 
     try {
       if(email != null && password != null){
-        await firebase_auth.FirebaseAuth.instance.signInWithEmailAndPassword(
+
+        String providerID = 'Nada';
+
+        await firebase_auth.FirebaseAuth.instance.fetchSignInMethodsForEmail(email).then((value){
+
+          if(value.toList().length > 0){
+            providerID = value.toList()[0];
+          } else {
+            providerID = 'password';
+          }
+
+        });
+
+        if(providerID == 'google.com'){
+
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Google!' };
+
+        } else if(providerID == 'facebook.com'){
+
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Facebook!' };
+           
+        } else {
+
+          await firebase_auth.FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email,
             password: password
           );
-        
-        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
-
-        if (user!= null && !user.emailVerified) {
-          await user.sendEmailVerification();//Solicitamos la verificación del email
-          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
-        }
-        else {
           
-          return { 'ok': true };
+          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+          if (user!= null && !user.emailVerified) {
+            await user.sendEmailVerification();//Solicitamos la verificación del email
+            return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+          }
+          else {
+            
+            return { 'ok': true };
+          }
         }
 
       } else {
@@ -60,22 +78,48 @@ class UsuarioProvider{
 
       if(googleSignInAccount != null){
 
-        final google_sign_in.GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
-        
-        final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
+        String providerID = 'Nada';
 
-        await _auth.signInWithCredential(credential);
+        await firebase_auth.FirebaseAuth.instance.fetchSignInMethodsForEmail(googleSignInAccount.email).then((value){
 
-        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+          if(value.toList().length > 0){
+            providerID = value.toList()[0];
+          } else {
+            providerID = 'google.com';
+          }
 
-        if (user!= null && !user.emailVerified) {
-          await user.sendEmailVerification();//Solicitamos la verificación del email
-          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        });
+
+        if(providerID == 'google.com'){
+
+          print('Valor: $providerID');
+
+          final google_sign_in.GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+          
+          final firebase_auth.AuthCredential credential = firebase_auth.GoogleAuthProvider.credential(
+            accessToken: googleSignInAuthentication.accessToken,
+            idToken: googleSignInAuthentication.idToken,
+          );
+
+          await _auth.signInWithCredential(credential);
+
+          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+          if (user!= null && !user.emailVerified) {
+            await user.sendEmailVerification();//Solicitamos la verificación del email
+            return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+          } else {
+            return { 'ok': true };
+          }
+
+        } else if(providerID == 'facebook.com'){
+
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Facebook!' };
+
         } else {
-          return { 'ok': true };
+
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Correo y Contraseña!' };
+          
         }
 
       } else {
@@ -106,19 +150,50 @@ class UsuarioProvider{
       final LoginResult loginResult = await _facebookAuth.login();
 
       if(loginResult.status == LoginStatus.success ){
-        
-        final firebase_auth.AuthCredential credential = 
-          firebase_auth.FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-        await _auth.signInWithCredential(credential);
+        final data = await _facebookAuth.getUserData();
 
-        firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+        print('Email: ${data['email']}');
 
-        if (user!= null && !user.emailVerified) {
-          await user.sendEmailVerification();//Solicitamos la verificación del email
-          return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+        String providerID = 'Nada';
+
+        await firebase_auth.FirebaseAuth.instance.fetchSignInMethodsForEmail(data['email']).then((value){
+
+          if(value.toList().length > 0){
+            providerID = value.toList()[0];
+          } else {
+            providerID = 'facebook.com';
+          }
+
+        });
+
+        if(providerID == 'facebook.com' ){
+
+          final firebase_auth.AuthCredential credential = 
+           firebase_auth.FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+          await _auth.signInWithCredential(credential);
+
+          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+
+          if (user!= null && !user.emailVerified) {
+
+            await user.sendEmailVerification();//Solicitamos la verificación del email
+
+            return { 'ok': false, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+
+          } else {
+            return { 'ok': true };
+          }
+
+        } else if(providerID == 'google.com' ){
+          
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Google!' };
+
         } else {
-          return { 'ok': true };
+
+          return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Correo y Contraseña!' };
+
         }
 
       } else if(loginResult.status == LoginStatus.cancelled ) {
@@ -163,20 +238,45 @@ class UsuarioProvider{
     try {
       if(email != null && password != null && passwordc != null){
         if(password == passwordc){
-          await firebase_auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password: password
+
+          String providerID = 'Nada';
+
+          await firebase_auth.FirebaseAuth.instance.fetchSignInMethodsForEmail(email).then((value){
+
+            if(value.toList().length > 0){
+            providerID = value.toList()[0];
+            } else {
+              providerID = 'password';
+            }
+
+          });
+
+          if(providerID == 'google.com' ){
+            
+            return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Google!' };
+            
+          } else if(providerID == 'facebook.com'){
+              
+            return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Facebook!' };
+
+          } else {
+
+            await firebase_auth.FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: email,
+              password: password
             );
 
-          firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
+            firebase_auth.User? user = firebase_auth.FirebaseAuth.instance.currentUser;
 
-          if (user!= null && !user.emailVerified) {
-            await user.sendEmailVerification();//Solicitamos la verificación del email
-            return { 'ok': true, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
-          }
-          else {
-            
-            return { 'ok': true, 'mensaje': '¡Cuenta registrada! Inicia sesión' };
+            if (user!= null && !user.emailVerified) {
+              await user.sendEmailVerification();//Solicitamos la verificación del email
+              return { 'ok': true, 'mensaje': '¡Debes verificar tu email (revisa tu bandeja de entrada)!' };
+            }
+            else {
+              
+              return { 'ok': true, 'mensaje': '¡Cuenta registrada! Inicia sesión' };
+            }
+
           }
 
         } else {
@@ -217,7 +317,7 @@ class UsuarioProvider{
             return { 'ok': false, 'mensaje': '¡Las contraseñas deben coincidir!' };
           }
         } else {
-          return { 'ok': false, 'mensaje': '¡La contraseña actual no coincide con la registrada!' };
+          return { 'ok': info['ok'], 'mensaje': info['mensaje'] };
         }
 
       } else {
@@ -236,9 +336,33 @@ class UsuarioProvider{
 
       String emailData = email == null ? 'correoinvalido123@algo.com' : email;
 
-      await _auth.sendPasswordResetEmail(email: emailData);
+      String providerID = 'Nada';
 
-      return { 'ok': true, 'mensaje': '¡Revisa la bandeja de entrada del correo electrónico proporcionado!' };
+          await firebase_auth.FirebaseAuth.instance.fetchSignInMethodsForEmail(emailData).then((value){
+
+            if(value.toList().length > 0){
+            providerID = value.toList()[0];
+            } else {
+              providerID = 'password';
+            }
+
+          });
+
+          if(providerID == 'google.com' ){
+            
+            return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Google!' };
+            
+          } else if(providerID == 'facebook.com'){
+              
+            return { 'ok': false, 'mensaje': '¡Este email posee una cuenta registrada con Facebook!' };
+
+          } else {
+
+            await _auth.sendPasswordResetEmail(email: emailData);
+            
+            return { 'ok': true, 'mensaje': '¡Revisa la bandeja de entrada del correo electrónico proporcionado!' };
+
+          }
 
 
     } on firebase_auth.FirebaseAuthException catch (e) {
